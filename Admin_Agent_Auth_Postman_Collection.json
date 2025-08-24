@@ -1,0 +1,490 @@
+{
+	"info": {
+		"_postman_id": "admin-agent-auth-collection",
+		"name": "Admin & Agent Authentication - Laundry Service",
+		"description": "Postman collection for testing Admin and Agent authentication endpoints in the Laundry Service application with localization support",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin Authentication",
+			"item": [
+				{
+					"name": "Admin Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Admin User\",\n    \"email\": \"admin@example.com\",\n    \"phone\": \"+966501234567\",\n    \"address\": \"123 Admin Street, Riyadh\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"register"
+							]
+						},
+						"description": "Register a new admin user"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"login"
+							]
+						},
+						"description": "Login as admin user"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"logout"
+							]
+						},
+						"description": "Logout admin user"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin authentication endpoints"
+		},
+		{
+			"name": "Agent Authentication",
+			"item": [
+				{
+					"name": "Agent Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Agent User\",\n    \"email\": \"agent@example.com\",\n    \"phone\": \"+966507654321\",\n    \"address\": \"456 Agent Avenue, Jeddah\",\n    \"license_number\": \"AG123456\",\n    \"city_id\": 1,\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/agent/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"agent",
+								"register"
+							]
+						},
+						"description": "Register a new agent user (will be pending approval)"
+					},
+					"response": []
+				},
+				{
+					"name": "Agent Login (Pending)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"agent@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/agent/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"agent",
+								"login"
+							]
+						},
+						"description": "Try to login as pending agent (should fail - account not approved)"
+					},
+					"response": []
+				},
+				{
+					"name": "Agent Login (Approved)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"agent@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/agent/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"agent",
+								"login"
+							]
+						},
+						"description": "Login as approved agent (should succeed)"
+					},
+					"response": []
+				},
+				{
+					"name": "Agent Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/agent/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"agent",
+								"logout"
+							]
+						},
+						"description": "Logout agent user"
+					},
+					"response": []
+				}
+			],
+			"description": "Agent authentication endpoints"
+		},
+		{
+			"name": "Admin Management",
+			"item": [
+				{
+					"name": "Admin Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/dashboard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"dashboard"
+							]
+						},
+						"description": "Access admin dashboard (requires admin authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "View Agents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/agents",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"agents"
+							]
+						},
+						"description": "View all agents (requires admin authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/agents/{{agent_user_id}}/approve",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"agents",
+								"{{agent_user_id}}",
+								"approve"
+							]
+						},
+						"description": "Approve a pending agent (requires admin authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Agent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/admin/agents/{{agent_user_id}}/reject",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"admin",
+								"agents",
+								"{{agent_user_id}}",
+								"reject"
+							]
+						},
+						"description": "Reject a pending agent (requires admin authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin management endpoints (require admin authentication)"
+		},
+		{
+			"name": "Agent Dashboard",
+			"item": [
+				{
+					"name": "Agent Dashboard",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/{{locale}}/agent/dashboard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{locale}}",
+								"agent",
+								"dashboard"
+							]
+						},
+						"description": "Access agent dashboard (requires agent authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Agent dashboard endpoints (require agent authentication)"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set CSRF token for all requests if available",
+					"if (pm.environment.get('csrf_token')) {",
+					"    pm.request.headers.add({",
+					"        key: 'X-CSRF-TOKEN',",
+					"        value: pm.environment.get('csrf_token')",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Extract CSRF token from response if available",
+					"if (pm.response.headers.get('Set-Cookie')) {",
+					"    const cookies = pm.response.headers.get('Set-Cookie');",
+					"    const csrfMatch = cookies.match(/XSRF-TOKEN=([^;]+)/);",
+					"    if (csrfMatch) {",
+					"        pm.environment.set('csrf_token', decodeURIComponent(csrfMatch[1]));",
+					"    }",
+					"}",
+					"",
+					"// Test response status",
+					"pm.test(\"Status code is 200 or 201\", function () {",
+					"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 302]);",
+					"});",
+					"",
+					"// Test response time",
+					"pm.test(\"Response time is less than 2000ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "locale",
+			"value": "en",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "agent_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "agent_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "csrf_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

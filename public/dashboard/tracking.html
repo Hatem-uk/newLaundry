@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة حالات الطلبات - موج</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-water"></i>
+                <span>موج</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item" data-page="home">
+                    <i class="fas fa-th-large"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="users.html" class="nav-item" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>ادارة المستخدمين</span>
+                </a>
+                <a href="agents.html" class="nav-item" data-page="agents">
+                    <i class="fas fa-user-tie"></i>
+                    <span>ادارة الوكلاء</span>
+                </a>
+                <a href="laundries.html" class="nav-item" data-page="laundries">
+                    <i class="fas fa-tshirt"></i>
+                    <span>ادارة المغاسل</span>
+                </a>
+                <a href="services.html" class="nav-item" data-page="services">
+                    <i class="fas fa-file-alt"></i>
+                    <span>ادارة الخدمات</span>
+                </a>
+                <a href="orders.html" class="nav-item" data-page="orders">
+                    <i class="fas fa-list"></i>
+                    <span>الطلبات</span>
+                </a>
+                <a href="tracking.html" class="nav-item active" data-page="tracking">
+                    <i class="fas fa-truck"></i>
+                    <span>متابعة حالات الطلبات</span>
+                </a>
+                <a href="#" class="nav-item logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>تسجيل الخروج</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="admin-info">
+                    <div class="admin-details">
+                        <span class="admin-title">Admin</span>
+                        <span class="admin-email">Admin@gmail.com</span>
+                    </div>
+                    <div class="admin-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Title -->
+            <div class="page-header">
+                <h1>متابعة حالات الطلبات</h1>
+                <p>متابعة حالة الطلبات في الوقت الفعلى</p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>متأخرة</h3>
+                        <span class="number">1</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>اجمالي الوكلاء</h3>
+                        <span class="number">1</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-paper-plane"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3>الطلبات النشطة</h3>
+                        <span class="number">5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Orders Section -->
+            <div class="section-container">
+                <h2 class="section-title">الطلبات النشطة</h2>
+                <p class="section-subtitle">متابعة الطلبات الحالية</p>
+
+                <!-- Status Filter -->
+                <div class="filter-section">
+                    <button class="filter-btn">
+                        حالة الطلب
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-dropdown">
+                        <div class="filter-option">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>في الطريق</span>
+                        </div>
+                        <div class="filter-option">
+                            <i class="fas fa-check-circle"></i>
+                            <span>وصل للعميل</span>
+                        </div>
+                        <div class="filter-option">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>في الطريق</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders List -->
+                <div class="orders-list">
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">#12354</div>
+                            <span class="status-badge on-way">في الطريق</span>
+                        </div>
+                        <div class="order-time">بدأ في 14:30</div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span>الوكيل: نورا سالم</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+12345678923</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>العميل: محمد سالم</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+123487678733</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>حى الملك فهد ، شارع الامير محمد ، الرياض</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">#12840</div>
+                            <span class="status-badge delivered">وصل للعميل</span>
+                        </div>
+                        <div class="order-time">بدأ في 15:00</div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span>الوكيل: أحمد محمد</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+12345678923</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>العميل: سارة أحمد</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+123487678733</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>حي العليا ، شارع العروبة ، الرياض</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">#12576</div>
+                            <span class="status-badge delayed">في الطريق</span>
+                        </div>
+                        <div class="order-time">بدأ في 13:45</div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <i class="fas fa-user-tie"></i>
+                                <span>الوكيل: محمد أحمد</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+12345678923</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-user"></i>
+                                <span>العميل: أحمد محمود</span>
+                                <i class="fas fa-phone"></i>
+                                <span>+123487678733</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>حي النزهة ، شارع الملك فهد ، الرياض</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
