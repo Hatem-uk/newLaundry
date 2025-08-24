@@ -18,6 +18,76 @@
         @endif
 
         <div class="user-details">
+            <!-- User Profile Header with Image/Logo -->
+            <div class="user-profile-header">
+                <div class="user-avatar">
+                    @if($user->admin && $user->admin->image)
+                        <img src="{{ asset('storage/' . $user->admin->image) }}" alt="صورة المدير" class="profile-image" 
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="default-avatar" style="display: none;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @elseif($user->customer && $user->customer->image)
+                        <img src="{{ asset('storage/' . $user->customer->image) }}" alt="صورة العميل" class="profile-image"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="default-avatar" style="display: none;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @elseif($user->laundry && $user->laundry->logo)
+                        <img src="{{ asset('storage/' . $user->laundry->logo) }}" alt="شعار المغسلة" class="profile-image"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="default-avatar" style="display: none;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @elseif($user->agent && $user->agent->logo)
+                        <img src="{{ asset('storage/' . $user->agent->logo) }}" alt="شعار الوكيل" class="profile-image"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="default-avatar" style="display: none;">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @else
+                        <div class="default-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    @endif
+                </div>
+                <div class="user-info">
+                    <h2>{{ $user->name }}</h2>
+                    <p class="user-role">
+                        @switch($user->role)
+                            @case('admin')
+                                <span class="role-badge admin">مدير</span>
+                                @break
+                            @case('laundry')
+                                <span class="role-badge laundry">مغسلة</span>
+                                @break
+                            @case('agent')
+                                <span class="role-badge agent">وكيل</span>
+                                @break
+                            @case('worker')
+                                <span class="role-badge worker">عامل</span>
+                                @break
+                            @case('customer')
+                                <span class="role-badge customer">عميل</span>
+                                @break
+                            @default
+                                <span class="role-badge">{{ ucfirst($user->role) }}</span>
+                        @endswitch
+                    </p>
+                    @if($user->admin && $user->admin->image)
+                        <small class="image-info">صورة الملف الشخصي متاحة</small>
+                     @elseif($user->customer && $user->customer->image)
+                        <small class="image-info">صورة الملف الشخصي متاحة</small>
+                     @elseif($user->laundry && $user->laundry->logo)
+                        <small class="image-info">شعار المغسلة متاح</small>
+                     @elseif($user->agent && $user->agent->logo)
+                        <small class="image-info">شعار الوكيل متاح</small>
+                     @else
+                        <small class="image-info">لا توجد صورة أو شعار</small>
+                    @endif
+                </div>
+            </div>
+
             <div class="detail-row">
                 <div class="detail-label">الاسم:</div>
                 <div class="detail-value">{{ $user->name }}</div>
@@ -59,30 +129,7 @@
                     </div>
                 </div>
             @endif
-            <div class="detail-row">
-                <div class="detail-label">الدور:</div>
-                <div class="detail-value">
-                    @switch($user->role)
-                        @case('admin')
-                            <span class="role-badge admin">مدير</span>
-                            @break
-                        @case('laundry')
-                            <span class="role-badge laundry">مغسلة</span>
-                            @break
-                        @case('agent')
-                            <span class="role-badge agent">وكيل</span>
-                            @break
-                        @case('worker')
-                            <span class="role-badge worker">عامل</span>
-                            @break
-                        @case('customer')
-                            <span class="role-badge customer">عميل</span>
-                            @break
-                        @default
-                            <span class="role-badge">{{ ucfirst($user->role) }}</span>
-                    @endswitch
-                </div>
-            </div>
+
             <div class="detail-row">
                 <div class="detail-label">الحالة:</div>
                 <div class="detail-value">
@@ -141,6 +188,41 @@
                 <div class="detail-label">آخر تحديث:</div>
                 <div class="detail-value">{{ $user->updated_at->format('Y-m-d H:i') }}</div>
             </div>
+            
+            <!-- Storage Information for Debugging -->
+            @if($user->admin && $user->admin->image || $user->customer && $user->customer->image || $user->laundry && $user->laundry->logo || $user->agent && $user->agent->logo)
+                <div class="detail-row">
+                    <div class="detail-label">معلومات التخزين:</div>
+                    <div class="detail-value">
+                        <div class="storage-info">
+                            @if($user->admin && $user->admin->image)
+                                <div class="storage-item">
+                                    <strong>المدير:</strong> 
+                                    <code>{{ $user->admin->image }}</code>
+                                 </div>
+                            @endif
+                            @if($user->customer && $user->customer->image)
+                                <div class="storage-item">
+                                    <strong>العميل:</strong> 
+                                    <code>{{ $user->customer->image }}</code>
+                                 </div>
+                            @endif
+                            @if($user->laundry && $user->laundry->logo)
+                                <div class="storage-item">
+                                    <strong>المغسلة:</strong> 
+                                    <code>{{ $user->laundry->logo }}</code>
+                                 </div>
+                            @endif
+                            @if($user->agent && $user->agent->logo)
+                                <div class="storage-item">
+                                    <strong>الوكيل:</strong> 
+                                    <code>{{ $user->agent->logo }}</code>
+                                 </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Action Buttons -->
@@ -159,6 +241,91 @@
 
 @push('styles')
 <style>
+    /* User Profile Header Styling */
+    .user-profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 25px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .user-avatar {
+        position: relative;
+        margin-left: 25px;
+    }
+    
+    .profile-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .profile-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .default-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .default-avatar i {
+        font-size: 60px;
+        color: white;
+    }
+    
+    .user-info h2 {
+        margin: 0 0 15px 0;
+        color: #2c3e50;
+        font-size: 32px;
+        font-weight: 700;
+    }
+    
+    .user-info .user-role {
+        margin: 0 0 10px 0;
+    }
+    
+    .image-info {
+        color: #27ae60;
+        font-size: 14px;
+        font-weight: 500;
+        display: block;
+        margin-top: 8px;
+    }
+    
+    .file-path {
+        color: #6c757d;
+        font-size: 12px;
+        font-family: monospace;
+        background: #f8f9fa;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        display: block;
+        margin-top: 5px;
+        word-break: break-all;
+    }
+    
+    .image-info:empty::before {
+        content: "لا توجد صورة أو شعار";
+        color: #e74c3c;
+    }
+
     .user-details {
         background: #fff;
         border-radius: 8px;
@@ -322,6 +489,76 @@
     .text-muted {
         color: #6c757d !important;
         font-size: 10px;
+    }
+    
+    /* Storage Information Styling */
+    .storage-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .storage-item {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .storage-item strong {
+        color: #495057;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .storage-item code {
+        background: #e9ecef;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #495057;
+        display: block;
+        margin: 5px 0;
+        word-break: break-all;
+    }
+    
+    .storage-item small {
+        color: #6c757d;
+        font-size: 11px;
+        display: block;
+        margin-top: 5px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .user-profile-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            margin-left: 0;
+            margin-bottom: 20px;
+        }
+        
+        .user-info h2 {
+            font-size: 28px;
+        }
+        
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .detail-label {
+            min-width: auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
     }
 </style>
 @endpush

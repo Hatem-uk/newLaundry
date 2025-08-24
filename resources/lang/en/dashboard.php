@@ -250,7 +250,7 @@ return [
     'Laundry Management' => 'Laundry Management',
     'Service Management' => 'Service Management',
     'Orders' => 'Orders',
-    'Order Tracking' => 'Order Tracking',
+
     'Profile' => 'Profile',
     'Logout' => 'Logout',
     'Admin' => 'Admin',
@@ -313,19 +313,10 @@ return [
     'No orders found' => 'No orders found',
     'Are you sure you want to delete this order?' => 'Are you sure you want to delete this order?',
     
-    // Order Tracking Keys
-    'Order Tracking' => 'Order Tracking',
-    'Real-time order status tracking' => 'Real-time order status tracking',
-    'Canceled' => 'Canceled',
-    'Last Update' => 'Last Update',
-    'Estimated Delivery' => 'Estimated Delivery',
-    'Update Status' => 'Update Status',
-    'Enter new status (pending, in_progress, on_way, completed):' => 'Enter new status (pending, in_progress, on_way, completed):',
-    
-    // Additional Status Keys
+    // Status Keys
     'Canceled' => 'Canceled',
     
-    // Additional Order Tracking Keys
+    // Additional Keys
     'Service/Package' => 'Service/Package',
     'ID' => 'ID',
     'Amount' => 'Amount',
@@ -363,10 +354,37 @@ return [
     'View Order' => 'View Order',
     'Back to Orders' => 'Back to Orders',
     
+    // Laundry Management Keys
+
+    'yes' => 'Yes',
+    'no' => 'No',
+    
+    // Days of the Week
+    'sunday' => 'Sunday',
+    'monday' => 'Monday',
+    'tuesday' => 'Tuesday',
+    'wednesday' => 'Wednesday',
+    'thursday' => 'Thursday',
+    'friday' => 'Friday',
+    'saturday' => 'Saturday',
+    'to' => 'to',
+    
+    // Laundry Status
+    'online' => 'Online',
+    'offline' => 'Offline',
+    'maintenance' => 'Maintenance',
+    
     // Alert Messages
     'Please fix the following errors:' => 'Please fix the following errors:',
     
     // JavaScript Messages
     'Saving...' => 'Saving...',
     'You have unsaved changes. Are you sure you want to leave?' => 'You have unsaved changes. Are you sure you want to leave?',
+    
+    // Image/Logo Keys
+    'profile_image' => 'Profile Image',
+    'profile_image_help' => 'Upload a profile image (JPEG, PNG, JPG, GIF - Max: 2MB)',
+    'logo' => 'Logo',
+    'logo_help' => 'Upload a logo image (JPEG, PNG, JPG, GIF - Max: 2MB)',
+    'profile_image_logo' => 'Profile Image / Logo',
 ];

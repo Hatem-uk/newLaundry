@@ -46,7 +46,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.users.store') }}" class="create-form">
+        <form method="POST" action="{{ route('admin.users.store') }}" class="create-form" enctype="multipart/form-data">
             @csrf
             
             <!-- Basic Information -->
@@ -107,6 +107,12 @@
                         <input type="text" id="laundry_name" name="laundry_name" value="{{ old('laundry_name') }}" class="form-control">
                         <small class="form-help">{{ __('dashboard.laundry_name_help') }}</small>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="laundry_logo">{{ __('dashboard.logo') }}</label>
+                        <input type="file" id="laundry_logo" name="laundry_logo" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.logo_help') }}</small>
+                    </div>
                 </div>
 
                 <!-- Worker Fields -->
@@ -132,6 +138,33 @@
                     <div class="form-group">
                         <label for="salary">{{ __('dashboard.salary') }}</label>
                         <input type="number" id="salary" name="salary" value="{{ old('salary', 0) }}" min="0" step="0.01" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Admin Image Field -->
+                <div id="admin-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="admin_image">{{ __('dashboard.profile_image') }}</label>
+                        <input type="file" id="admin_image" name="admin_image" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.profile_image_help') }}</small>
+                    </div>
+                </div>
+
+                <!-- Customer Image Field -->
+                <div id="customer-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="customer_image">{{ __('dashboard.profile_image') }}</label>
+                        <input type="file" id="customer_image" name="customer_image" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.profile_image_help') }}</small>
+                    </div>
+                </div>
+
+                <!-- Agent Logo Field -->
+                <div id="agent-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="agent_logo">{{ __('dashboard.logo') }}</label>
+                        <input type="file" id="agent_logo" name="agent_logo" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.logo_help') }}</small>
                     </div>
                 </div>
             </div>
@@ -378,6 +411,34 @@
         resize: vertical;
         min-height: 80px;
     }
+
+    /* File input styling */
+    input[type="file"].form-control {
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+
+    input[type="file"].form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    input[type="file"].form-control::-webkit-file-upload-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    input[type="file"].form-control::-webkit-file-upload-button:hover {
+        background: #0056b3;
+    }
 </style>
 @endpush
 
@@ -394,6 +455,9 @@
         const addressSection = document.getElementById('address-section');
         const laundryFields = document.getElementById('laundry-fields');
         const workerFields = document.getElementById('worker-fields');
+        const adminFields = document.getElementById('admin-fields');
+        const customerFields = document.getElementById('customer-fields');
+        const agentFields = document.getElementById('agent-fields');
 
         // Password confirmation validation
         function validatePassword() {
@@ -416,6 +480,9 @@
             addressSection.style.display = 'none';
             laundryFields.style.display = 'none';
             workerFields.style.display = 'none';
+            adminFields.style.display = 'none';
+            customerFields.style.display = 'none';
+            agentFields.style.display = 'none';
             
             // Show/hide coins field based on role
             if (role === 'customer') {
@@ -437,8 +504,16 @@
                     workerFields.style.display = 'block';
                     // Make laundry_id required for workers
                     document.getElementById('laundry_id').required = true;
-                } else {
-                    // For admin, agent, customer - make laundry_id not required
+                } else if (role === 'admin') {
+                    adminFields.style.display = 'block';
+                } else if (role === 'customer') {
+                    customerFields.style.display = 'block';
+                } else if (role === 'agent') {
+                    agentFields.style.display = 'block';
+                }
+                
+                // For admin, agent, customer - make laundry_id not required
+                if (role !== 'worker') {
                     document.getElementById('laundry_id').required = false;
                 }
             }

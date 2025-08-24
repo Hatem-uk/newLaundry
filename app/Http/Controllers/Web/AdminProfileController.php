@@ -46,6 +46,7 @@ class AdminProfileController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => ['required', 'email', Rule::unique('users')->ignore($admin->id)],
                 'phone' => 'required|string|max:20',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'current_password' => 'nullable|required_with:new_password',
                 'new_password' => 'nullable|min:6|confirmed',
                 'new_password_confirmation' => 'nullable|min:6'
@@ -63,16 +64,33 @@ class AdminProfileController extends Controller
                 'email' => $request->email,
             ]);
 
+            // Handle image upload
+            $imagePath = $admin->admin->image ?? null; // Keep existing image by default
+            if ($request->hasFile('image')) {
+                // Delete old image if exists
+                if ($admin->admin && $admin->admin->image) {
+                    Helper::deleteFile($admin->admin->image);
+                }
+                // Upload new image
+                $imagePath = Helper::uploadFile(
+                    $request->file('image'),
+                    'admin_images',
+                    ['jpeg', 'png', 'jpg', 'gif'],
+                    2048
+                );
+            }
+
             // Update admin profile if exists, create if not
             if ($admin->admin) {
                 $admin->admin->update([
                     'phone' => $request->phone,
+                    'image' => $imagePath,
                 ]);
             } else {
                 $admin->admin()->create([
                     'phone' => $request->phone,
                     'address' => '',
-                    'image' => null
+                    'image' => $imagePath
                 ]);
             }
 

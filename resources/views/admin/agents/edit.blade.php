@@ -7,6 +7,41 @@
     <title>تعديل الوكيل - {{ $agent->user->name }} - موج</title>
     <link rel="stylesheet" href="{{ asset('dashboard/styles.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .current-logo {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .current-logo img {
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .current-logo p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
@@ -42,10 +77,7 @@
                     <i class="fas fa-list"></i>
                     <span>الطلبات</span>
                 </a>
-                <a href="{{ route('admin.tracking') }}" class="nav-item" data-page="tracking">
-                    <i class="fas fa-truck"></i>
-                    <span>متابعة حالات الطلبات</span>
-                </a>
+
                 <a href="{{ route('admin.profile.show') }}" class="nav-item">
                     <i class="fas fa-user-cog"></i>
                     <span>الملف الشخصي</span>
@@ -93,7 +125,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('admin.agents.update', $agent) }}" class="edit-form">
+                <form method="POST" action="{{ route('admin.agents.update', $agent) }}" class="edit-form" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -148,6 +180,21 @@
                         <label for="address">العنوان</label>
                         <textarea id="address" name="address" class="form-input" rows="3">{{ old('address', $agent->address) }}</textarea>
                         @error('address')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="logo">الشعار</label>
+                        @if($agent->logo)
+                            <div class="current-logo">
+                                <img src="{{ asset('storage/' . $agent->logo) }}" alt="الشعار الحالي" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الشعار الحالي</p>
+                            </div>
+                        @endif
+                        <input type="file" id="logo" name="logo" class="form-input" accept="image/*">
+                        <small class="form-help">الصيغ المسموحة: JPEG, PNG, JPG, GIF (الحد الأقصى: 2MB)</small>
+                        @error('logo')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
                     </div>

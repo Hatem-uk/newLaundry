@@ -42,10 +42,7 @@
                     <i class="fas fa-list"></i>
                     <span>الطلبات</span>
                 </a>
-                <a href="{{ route('admin.tracking') }}" class="nav-item" data-page="tracking">
-                    <i class="fas fa-truck"></i>
-                    <span>متابعة حالات الطلبات</span>
-                </a>
+
                 <a href="{{ route('admin.profile.show') }}" class="nav-item active">
                     <i class="fas fa-user-cog"></i>
                     <span>الملف الشخصي</span>
@@ -105,11 +102,22 @@
                 <div class="profile-details">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            <i class="fas fa-user-circle"></i>
+                            @if($admin->admin->image)
+                                <img src="{{ asset('storage/' . $admin->admin->image) }}" alt="صورة الملف الشخصي" class="profile-image">
+                            @else
+                                <div class="default-avatar">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                            @endif
                         </div>
                         <div class="profile-info">
                             <h2>{{ $admin->name }}</h2>
                             <p class="role">مدير النظام</p>
+                            @if($admin->admin->image)
+                                <small class="image-info">صورة الملف الشخصي متاحة</small>
+                            @else
+                                <small class="image-info">لا توجد صورة للملف الشخصي</small>
+                            @endif
                         </div>
                     </div>
 
@@ -193,6 +201,203 @@
         </div>
     </div>
 
+    <style>
+        /* Profile Image Styling */
+        .profile-avatar {
+            position: relative;
+            margin-left: 20px;
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .default-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .default-avatar i {
+            font-size: 60px;
+            color: white;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-info h2 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .profile-info .role {
+            margin: 0 0 8px 0;
+            color: #7f8c8d;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .image-info {
+            color: #27ae60;
+            font-size: 14px;
+            font-weight: 500;
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .image-info:empty::before {
+            content: "لا توجد صورة للملف الشخصي";
+            color: #e74c3c;
+        }
+        
+        /* Enhanced Profile Details */
+        .profile-details {
+            background: #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .detail-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .status-badge.active {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Action Buttons */
+        .action-section {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-avatar {
+                margin-left: 0;
+                margin-bottom: 20px;
+            }
+            
+            .detail-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .action-section {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+    
     <script src="{{ asset('dashboard/script.js') }}"></script>
     <script>
         // Initialize page

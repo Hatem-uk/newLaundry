@@ -21,7 +21,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.users.update', $user) }}" class="edit-form">
+        <form method="POST" action="{{ route('admin.users.update', $user) }}" class="edit-form" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             
@@ -178,8 +178,67 @@
                         <input type="text" id="customer_address" name="customer_address" value="{{ old('customer_address', $user->customer->address ?? '') }}" class="form-control">
                     </div>
                 @endif
+            </div>
 
-               
+            <!-- Image/Logo Upload Section -->
+            <div class="form-section">
+                <h3>{{ __('dashboard.profile_image_logo') }}</h3>
+                
+                @if($user->admin)
+                    <div class="form-group">
+                        <label for="admin_image">{{ __('dashboard.profile_image') }} ({{ __('dashboard.admin') }})</label>
+                        @if($user->admin->image)
+                            <div class="current-image">
+                                <img src="{{ asset('storage/' . $user->admin->image) }}" alt="الصورة الحالية" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الصورة الحالية</p>
+                            </div>
+                        @endif
+                        <input type="file" id="admin_image" name="admin_image" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.profile_image_help') }}</small>
+                    </div>
+                @endif
+
+                @if($user->customer)
+                    <div class="form-group">
+                        <label for="customer_image">{{ __('dashboard.profile_image') }} ({{ __('dashboard.customer') }})</label>
+                        @if($user->customer->image)
+                            <div class="current-image">
+                                <img src="{{ asset('storage/' . $user->customer->image) }}" alt="الصورة الحالية" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الصورة الحالية</p>
+                            </div>
+                        @endif
+                        <input type="file" id="customer_image" name="customer_image" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.profile_image_help') }}</small>
+                    </div>
+                @endif
+
+                @if($user->laundry)
+                    <div class="form-group">
+                        <label for="laundry_logo">{{ __('dashboard.logo') }} ({{ __('dashboard.laundry') }})</label>
+                        @if($user->laundry->logo)
+                            <div class="current-image">
+                                <img src="{{ asset('storage/' . $user->laundry->logo) }}" alt="الشعار الحالي" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الشعار الحالي</p>
+                            </div>
+                        @endif
+                        <input type="file" id="laundry_logo" name="laundry_logo" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.logo_help') }}</small>
+                    </div>
+                @endif
+
+                @if($user->agent)
+                    <div class="form-group">
+                        <label for="agent_logo">{{ __('dashboard.logo') }} ({{ __('dashboard.agent') }})</label>
+                        @if($user->agent->logo)
+                            <div class="current-image">
+                                <img src="{{ asset('storage/' . $user->agent->logo) }}" alt="الشعار الحالي" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الشعار الحالي</p>
+                            </div>
+                        @endif
+                        <input type="file" id="agent_logo" name="agent_logo" class="form-control" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.logo_help') }}</small>
+                    </div>
+                @endif
             </div>
 
             <!-- Password Section -->
@@ -389,6 +448,55 @@
 
     .text-warning {
         color: #ffc107 !important;
+    }
+
+    /* Image display and file input styling */
+    .current-image {
+        text-align: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    
+    .current-image img {
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .current-image p {
+        margin: 5px 0 0 0;
+        font-size: 12px;
+        color: #666;
+    }
+    
+    input[type="file"] {
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background-color: #fff;
+        cursor: pointer;
+    }
+    
+    input[type="file"]:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    input[type="file"]::-webkit-file-upload-button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    input[type="file"]::-webkit-file-upload-button:hover {
+        background: #0056b3;
     }
 </style>
 @endpush

@@ -43,10 +43,7 @@
                     <i class="fas fa-list"></i>
                     <span>{{ __('dashboard.Orders') }}</span>
                 </a>
-                <a href="{{ route('admin.tracking') }}" class="nav-item {{ request()->routeIs('admin.tracking') ? 'active' : '' }}" data-page="tracking">
-                    <i class="fas fa-truck"></i>
-                    <span>{{ __('dashboard.Order Tracking') }}</span>
-                </a>
+
                 <a href="{{ route('admin.profile.show') }}" class="nav-item {{ request()->routeIs('admin.profile*') ? 'active' : '' }}">
                     <i class="fas fa-user-cog"></i>
                     <span>{{ __('dashboard.Profile') }}</span>

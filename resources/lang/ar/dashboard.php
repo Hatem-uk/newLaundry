@@ -250,7 +250,7 @@ return [
     'Laundry Management' => 'إدارة المغاسل',
     'Service Management' => 'إدارة الخدمات',
     'Orders' => 'الطلبات',
-    'Order Tracking' => 'تتبع الطلبات',
+
     'Profile' => 'الملف الشخصي',
     'Logout' => 'تسجيل الخروج',
     'Admin' => 'مدير',
@@ -313,19 +313,10 @@ return [
     'No orders found' => 'لم يتم العثور على طلبات',
     'Are you sure you want to delete this order?' => 'هل أنت متأكد من حذف هذا الطلب؟',
     
-    // Order Tracking Keys
-    'Order Tracking' => 'تتبع الطلبات',
-    'Real-time order status tracking' => 'تتبع حالة الطلبات في الوقت الفعلي',
-    'Canceled' => 'ملغي',
-    'Last Update' => 'آخر تحديث',
-    'Estimated Delivery' => 'موعد التسليم المتوقع',
-    'Update Status' => 'تحديث الحالة',
-    'Enter new status (pending, in_progress, on_way, completed):' => 'أدخل الحالة الجديدة (معلق، قيد التنفيذ، في الطريق، مكتمل):',
-    
-    // Additional Status Keys
+    // Status Keys
     'Canceled' => 'ملغي',
     
-    // Additional Order Tracking Keys
+    // Additional Keys
     'Service/Package' => 'الخدمة/الباقة',
     'ID' => 'الرقم',
     'Amount' => 'المبلغ',
@@ -363,10 +354,37 @@ return [
     'View Order' => 'عرض الطلب',
     'Back to Orders' => 'العودة للطلبات',
     
+    // Laundry Management Keys
+
+    'yes' => 'نعم',
+    'no' => 'لا',
+    
+    // Days of the Week
+    'sunday' => 'الأحد',
+    'monday' => 'الاثنين',
+    'tuesday' => 'الثلاثاء',
+    'wednesday' => 'الأربعاء',
+    'thursday' => 'الخميس',
+    'friday' => 'الجمعة',
+    'saturday' => 'السبت',
+    'to' => 'إلى',
+    
+    // Laundry Status
+    'online' => 'متصل',
+    'offline' => 'غير متصل',
+    'maintenance' => 'صيانة',
+    
     // Alert Messages
     'Please fix the following errors:' => 'يرجى إصلاح الأخطاء التالية:',
     
     // JavaScript Messages
     'Saving...' => 'جاري الحفظ...',
     'You have unsaved changes. Are you sure you want to leave?' => 'لديك تغييرات غير محفوظة. هل أنت متأكد من أنك تريد المغادرة؟',
+    
+    // Image/Logo Keys
+    'profile_image' => 'صورة الملف الشخصي',
+    'profile_image_help' => 'قم برفع صورة للملف الشخصي (JPEG, PNG, JPG, GIF - الحد الأقصى: 2MB)',
+    'logo' => 'الشعار',
+    'logo_help' => 'قم برفع صورة للشعار (JPEG, PNG, JPG, GIF - الحد الأقصى: 2MB)',
+    'profile_image_logo' => 'صورة الملف الشخصي / الشعار',
 ];

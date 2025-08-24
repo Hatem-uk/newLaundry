@@ -87,7 +87,7 @@ Route::get('orders/{order}/edit', [AdminController::class, 'editOrder'])->name('
 Route::put('orders/{order}', [AdminController::class, 'updateOrder'])->name('admin.orders.update');
 Route::delete('orders/{order}', [AdminController::class, 'deleteOrder'])->name('admin.orders.delete');
 
-Route::get('tracking', [AdminController::class, 'tracking'])->name('admin.tracking');
+
             
             // Admin profile routes
             Route::get('profile', [AdminProfileController::class, 'show'])->name('admin.profile.show');

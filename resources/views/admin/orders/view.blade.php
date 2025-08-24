@@ -42,10 +42,7 @@
                     <i class="fas fa-list"></i>
                     <span>الطلبات</span>
                 </a>
-                <a href="{{ route('admin.tracking') }}" class="nav-item" data-page="tracking">
-                    <i class="fas fa-truck"></i>
-                    <span>متابعة حالات الطلبات</span>
-                </a>
+
                 <a href="{{ route('admin.profile.show') }}" class="nav-item">
                     <i class="fas fa-user-cog"></i>
                     <span>الملف الشخصي</span>

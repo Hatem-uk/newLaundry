@@ -42,10 +42,7 @@
                     <i class="fas fa-list"></i>
                     <span>الطلبات</span>
                 </a>
-                <a href="{{ route('admin.tracking') }}" class="nav-item" data-page="tracking">
-                    <i class="fas fa-truck"></i>
-                    <span>متابعة حالات الطلبات</span>
-                </a>
+
                 <a href="{{ route('admin.profile.show') }}" class="nav-item active">
                     <i class="fas fa-user-cog"></i>
                     <span>الملف الشخصي</span>
@@ -95,7 +92,7 @@
 
             <!-- Edit Profile Form -->
             <div class="section-container">
-                <form method="POST" action="{{ route('admin.profile.update') }}" class="edit-form">
+                <form method="POST" action="{{ route('admin.profile.update') }}" class="edit-form" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     
@@ -119,6 +116,21 @@
                         <label for="phone">رقم الهاتف</label>
                         <input type="tel" id="phone" name="phone" class="form-input @error('phone') error @enderror" value="{{ old('phone', $admin->admin->phone ?? '') }}" required>
                         @error('phone')
+                            <span class="error-message">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image">{{ __('dashboard.profile_image') }}</label>
+                        @if($admin->admin->image)
+                            <div class="current-image">
+                                <img src="{{ asset('storage/' . $admin->admin->image) }}" alt="الصورة الحالية" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                                <p>الصورة الحالية</p>
+                            </div>
+                        @endif
+                        <input type="file" id="image" name="image" class="form-input" accept="image/*">
+                        <small class="form-help">{{ __('dashboard.profile_image_help') }}</small>
+                        @error('image')
                             <span class="error-message">{{ $message }}</span>
                         @enderror
                     </div>
@@ -169,6 +181,64 @@
             </div>
         </main>
     </div>
+
+    <style>
+        .current-image {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        .current-image img {
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .current-image p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .form-help {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+        
+        input[type="file"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        input[type="file"]::-webkit-file-upload-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: #0056b3;
+        }
+    </style>
 
     <script src="{{ asset('dashboard/script.js') }}"></script>
     <script>

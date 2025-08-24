@@ -177,16 +177,15 @@ class Helper
             $filename = Str::uuid() . '.' . $extension;
             
             // Ensure directory exists
-            $fullDirectory = "public/{$directory}";
-            if (!Storage::exists($fullDirectory)) {
-                Storage::makeDirectory($fullDirectory);
+            if (!Storage::disk('public')->exists($directory)) {
+                Storage::disk('public')->makeDirectory($directory);
             }
 
-            // Store file
-            $path = $file->storeAs($fullDirectory, $filename);
+            // Store file using public disk
+            $path = $file->storeAs($directory, $filename, 'public');
             
-            // Return relative path
-            $relativePath = str_replace('public/', '', $path);
+            // Return relative path (no need to replace 'public/' since we're using public disk)
+            $relativePath = $path;
             
             Log::info('File uploaded successfully', [
                 'original_name' => $file->getClientOriginalName(),

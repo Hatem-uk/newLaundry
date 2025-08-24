@@ -137,25 +137,7 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Show order tracking page
-     */
-    public function tracking()
-    {
-        try {
-            $orders = Order::with(['user', 'provider'])
-                ->whereIn('status', ['pending', 'in_process', 'completed'])
-                ->orderBy('updated_at', 'desc')
-                ->paginate(15);
-                
-            $counts = $this->getOrderStatusCounts();
-                
-            return view('admin.tracking', compact('orders', 'counts'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
+
 
     // ==================== USER MANAGEMENT FUNCTIONS ====================
 
@@ -833,6 +815,10 @@ class AdminController extends Controller
             'fcm_tocken' => 'nullable|string|max:255',
             'email_verified_action' => 'nullable|in:verify,unverify',
             'password' => 'nullable|string|min:8|confirmed',
+            'admin_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'customer_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'laundry_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'agent_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
     }
 
@@ -857,6 +843,10 @@ class AdminController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'fcm_tocken' => 'nullable|string|max:255',
             'email_verified' => 'nullable|boolean',
+            'admin_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'customer_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'laundry_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'agent_logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
     }
 
@@ -867,13 +857,14 @@ class AdminController extends Controller
     {
         return $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $request->agent->user_id,
+            'email' => 'required|email|unique:users,email,' . $request->route('agent')->user_id,
             'phone' => 'nullable|string|max:20',
             'license_number' => 'required|string|max:255',
             'city_id' => 'required|exists:cities,id',
             'address' => 'nullable|string|max:500',
             'status' => 'required|in:pending,approved,rejected',
             'is_active' => 'required|boolean',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
     }
@@ -892,8 +883,6 @@ class AdminController extends Controller
             'city_id' => 'required|exists:cities,id',
             'status' => 'required|in:online,offline,maintenance',
             'is_active' => 'required|boolean',
-            'delivery_available' => 'required|boolean',
-            'pickup_available' => 'required|boolean',
             'working_hours' => 'nullable|array',
         ]);
     }
@@ -912,11 +901,7 @@ class AdminController extends Controller
             'city_id' => 'required|exists:cities,id',
             'address' => 'required|string|max:500',
             'address_en' => 'required|string|max:500',
-            'delivery_available' => 'required|boolean',
-            'pickup_available' => 'required|boolean',
-            'working_hours' => 'required|array',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+         ]);
     }
 
     /**
@@ -984,6 +969,9 @@ class AdminController extends Controller
 
         $user->update($userData);
 
+        // Handle image uploads for different user types
+        $this->handleUserImageUploads($user, $validated);
+
         if ($user->role === 'customer' && isset($validated['coins'])) {
             if ($user->customer) {
                 $user->customer->update(['coins' => $validated['coins']]);
@@ -1014,11 +1002,28 @@ class AdminController extends Controller
 
         $agent->user->update($userData);
 
+        // Handle logo upload
+        $logoPath = $agent->logo; // Keep existing logo by default
+        if (request()->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($agent->logo) {
+                Helper::deleteFile($agent->logo);
+            }
+            // Upload new logo
+            $logoPath = Helper::uploadFile(
+                request()->file('logo'),
+                'agent_logos',
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+        }
+
         $agent->update([
             'license_number' => $validated['license_number'],
             'city_id' => $validated['city_id'],
             'address' => $validated['address'],
             'is_active' => $validated['is_active'],
+            'logo' => $logoPath,
         ]);
     }
 
@@ -1040,10 +1045,7 @@ class AdminController extends Controller
             'city_id' => $validated['city_id'],
             'status' => $validated['status'],
             'is_active' => $validated['is_active'],
-            'delivery_available' => $validated['delivery_available'],
-            'pickup_available' => $validated['pickup_available'],
-            'working_hours' => $validated['working_hours'],
-        ]);
+         ]);
     }
 
     /**
@@ -1155,9 +1157,9 @@ class AdminController extends Controller
     private function createLaundryProfile(User $user, array $validated): Laundry
     {
         $logoPath = null;
-        if (request()->hasFile('logo')) {
+        if (request()->hasFile('laundry_logo')) {
             $logoPath = Helper::uploadFile(
-                request()->file('logo'),
+                request()->file('laundry_logo'),
                 'laundry_logos',
                 ['jpeg', 'png', 'jpg', 'gif'],
                 2048
@@ -1171,10 +1173,7 @@ class AdminController extends Controller
             'address' => Helper::translateData(request(), 'address', 'address_en'),
             'phone' => $validated['phone'],
             'logo' => $logoPath,
-            'delivery_available' => $validated['delivery_available'],
-            'pickup_available' => $validated['pickup_available'],
-            'working_hours' => $validated['working_hours'],
-            'is_active' => true
+             'is_active' => true
         ]);
     }
 
@@ -1202,6 +1201,16 @@ class AdminController extends Controller
      */
     private function createCustomerProfile(User $user, array $validated): void
     {
+        $imagePath = null;
+        if (request()->hasFile('customer_image')) {
+            $imagePath = Helper::uploadFile(
+                request()->file('customer_image'),
+                'customer_images',
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+        }
+
         $user->customer()->create([
             'address' => $validated['address'] ? [
                 'ar' => $validated['address'],
@@ -1209,7 +1218,8 @@ class AdminController extends Controller
             ] : '',
             'phone' => $validated['phone'] ?? '',
             'city_id' => $validated['city_id'],
-            'coins' => $validated['coins'] ?? 100
+            'coins' => $validated['coins'] ?? 100,
+            'image' => $imagePath
         ]);
     }
 
@@ -1218,9 +1228,20 @@ class AdminController extends Controller
      */
     private function createAdminProfile(User $user, array $validated): void
     {
+        $imagePath = null;
+        if (request()->hasFile('admin_image')) {
+            $imagePath = Helper::uploadFile(
+                request()->file('admin_image'),
+                'admin_images',
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+        }
+
         $user->admin()->create([
             'phone' => $validated['phone'] ?? null,
             'address' => $validated['address'] ?? null,
+            'image' => $imagePath,
             'is_active' => true
         ]);
     }
@@ -1230,6 +1251,16 @@ class AdminController extends Controller
      */
     private function createAgentProfile(User $user, array $validated): void
     {
+        $logoPath = null;
+        if (request()->hasFile('agent_logo')) {
+            $logoPath = Helper::uploadFile(
+                request()->file('agent_logo'),
+                'agent_logos',
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+        }
+
         $user->agent()->create([
             'name' => [
                 'ar' => $user->name,
@@ -1241,6 +1272,7 @@ class AdminController extends Controller
                 'en' => $validated['address']
             ] : null,
             'city_id' => $validated['city_id'],
+            'logo' => $logoPath,
             'is_active' => true,
             'status' => 'online'
         ]);
@@ -1763,9 +1795,53 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Handle image uploads for different user types
+     */
+    private function handleUserImageUploads(User $user, array $validated): void
+    {
+        // Handle admin image upload
+        if (isset($validated['admin_image']) && $user->admin) {
+            $this->handleImageUpload($user->admin, 'admin_image', 'admin_images', 'image');
+        }
 
+        // Handle customer image upload
+        if (isset($validated['customer_image']) && $user->customer) {
+            $this->handleImageUpload($user->customer, 'customer_image', 'customer_images', 'image');
+        }
 
+        // Handle laundry logo upload
+        if (isset($validated['laundry_logo']) && $user->laundry) {
+            $this->handleImageUpload($user->laundry, 'laundry_logo', 'laundry_logos', 'logo');
+        }
 
+        // Handle agent logo upload
+        if (isset($validated['agent_logo']) && $user->agent) {
+            $this->handleImageUpload($user->agent, 'agent_logo', 'agent_logos', 'logo');
+        }
+    }
+
+    /**
+     * Handle individual image upload
+     */
+    private function handleImageUpload($model, string $fieldName, string $directory, string $attribute): void
+    {
+        if (request()->hasFile($fieldName)) {
+            // Delete old image if exists
+            if ($model->$attribute) {
+                Helper::deleteFile($model->$attribute);
+            }
+            // Upload new image
+            $imagePath = Helper::uploadFile(
+                request()->file($fieldName),
+                $directory,
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+            // Update model
+            $model->update([$attribute => $imagePath]);
+        }
+    }
 }
 
 
