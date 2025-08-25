@@ -99,6 +99,7 @@
                     <a href="{{ route('admin.laundries.view', $laundry) }}" class="action-btn view" title="{{ __('dashboard.view') }}">
                         <i class="fas fa-eye"></i>
                     </a>
+                    
                     <a href="{{ route('admin.laundries.edit', $laundry) }}" class="action-btn edit" title="{{ __('dashboard.edit') }}">
                         <i class="fas fa-edit"></i>
                     </a>

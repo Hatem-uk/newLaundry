@@ -4,6 +4,13 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+
+// Models
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Laundry;
@@ -12,15 +19,48 @@ use App\Models\Agent;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\Package;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Rating;
+
+// Helpers
 use App\Helpers\Helper;
 
+/**
+ * Admin Controller
+ * 
+ * Handles all admin panel functionality including:
+ * - Dashboard management
+ * - User management (customers, agents, laundries)
+ * - Order management
+ * - Service management
+ * - Statistics and reporting
+ */
 class AdminController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | CONTROLLER SECTIONS
+    |--------------------------------------------------------------------------
+    | 1. DASHBOARD - Main admin dashboard and statistics
+    | 2. USER MANAGEMENT - Customer, admin, and general user management
+    | 3. SERVICE MANAGEMENT - Service CRUD operations
+    | 4. LAUNDRY MANAGEMENT - Laundry CRUD and status management
+    | 5. ORDER MANAGEMENT - Order CRUD and status management
+    | 6. AGENT MANAGEMENT - Agent CRUD and status management
+    | 7. HELPER & UTILITY METHODS - Dashboard stats and calculations
+    | 8. VALIDATION METHODS - Request validation rules
+    | 9. DATA UPDATE & CREATION METHODS - Model update operations
+    | 10. USER CREATION & PROFILE METHODS - User account creation
+    | 11. LAUNDRY & SERVICE CREATION METHODS - Laundry/service creation
+    | 12. AGENT STATUS MANAGEMENT METHODS - Agent approval/rejection
+    | 13. LAUNDRY VIEW & STATISTICS METHODS - Laundry detail views
+    | 14. UTILITY & NOTIFICATION METHODS - General utilities
+    | 15. NOTIFICATION & STATUS UPDATE METHODS - Status changes
+    | 16. IMAGE HANDLING METHODS - File upload management
+    |--------------------------------------------------------------------------
+    */
+
+    // ==================== DASHBOARD ====================
+    
     /**
      * Show admin dashboard
      */
@@ -35,6 +75,8 @@ class AdminController extends Controller
         }
     }
 
+    // ==================== USER MANAGEMENT ====================
+    
     /**
      * Show users management page
      */
@@ -96,15 +138,15 @@ class AdminController extends Controller
         }
     }
 
+    // ==================== SERVICE MANAGEMENT ====================
+    
     /**
      * Show services management page
      */
     public function services()
     {
         try {
-            $services = Service::with(['provider' => function($query) {
-                    $query->with(['laundry', 'agent', 'admin']);
-                }])
+            $services = Service::with(['provider'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
                 
@@ -114,6 +156,333 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $errorMessage['message']);
         }
     }
+
+    /**
+     * Show create service form
+     */
+    public function createService(Request $request)
+    {
+        try {
+            $providerId = $request->query('provider_id');
+            $type = $request->query('type', 'laundry');
+            
+            $providers = User::where('role', $type)->get();
+            
+            return view('admin.services.create', compact('providers', 'providerId', 'type'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Store new service
+     */
+    public function storeService(Request $request)
+    {
+        try {
+            $validated = $this->validateServiceCreation($request);
+            $service = $this->createServiceData($validated);
+
+            $successMessage = Helper::messageSuccess('Service created');
+            return redirect()->route('admin.services.view', $service)->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * View service details
+     */
+    public function viewService(Service $service)
+    {
+        try {
+            return view('admin.services.view', compact('service'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Show edit service form
+     */
+    public function editService(Service $service)
+    {
+        try {
+            return view('admin.services.edit', compact('service'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Update service
+     */
+    public function updateService(Request $request, Service $service)
+    {
+        try {
+            $validated = $this->validateServiceUpdate($request);
+            $this->updateServiceData($service, $validated);
+
+            $successMessage = Helper::messageSuccess('Service updated');
+            return redirect()->route('admin.services.view', $service)->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Delete service
+     */
+    public function deleteService(Service $service)
+    {
+        try {
+            $service->delete();
+            
+            $successMessage = Helper::messageSuccess('Service deleted');
+            return redirect()->route('admin.services')->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    // ==================== LAUNDRY MANAGEMENT ====================
+
+    /**
+     * Show laundry details
+     */
+    public function viewLaundry(Laundry $laundry)
+    {
+        try {
+            // Load basic relationships
+            $laundry->load(['user', 'city']);
+            
+            $this->ensureTranslatableFields($laundry);
+            
+            // Load translatable fields for related models
+            if ($laundry->city) {
+                $this->ensureTranslatableFields($laundry->city);
+            }
+            
+            // Get comprehensive data
+            $data = $this->getLaundryViewData($laundry);
+            $laundryStats = $this->calculateLaundryStats($laundry);
+            
+            // Add counts to the laundry model for easy access in the view
+            $laundry->orders_count = $data['orders']->count();
+            $laundry->services_count = $data['services']->count();
+            $laundry->total_ratings = $data['ratings']->count();
+            
+            // Calculate average rating
+            if ($data['ratings']->count() > 0) {
+                $laundry->average_rating = $data['ratings']->avg('rating');
+            } else {
+                $laundry->average_rating = 0;
+            }
+            
+            return view('admin.laundries.view', compact('laundry', 'data', 'laundryStats'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Show edit laundry form
+     */
+    public function editLaundry(Laundry $laundry)
+    {
+        try {
+            $laundry->load(['user', 'city']);
+            $this->ensureTranslatableFields($laundry);
+            
+            $cities = \App\Models\City::all();
+            foreach ($cities as $city) {
+                $this->ensureTranslatableFields($city);
+            }
+            
+            return view('admin.laundries.edit', compact('laundry', 'cities'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Update laundry information
+     */
+    public function updateLaundry(Request $request, Laundry $laundry)
+    {
+        try {
+            $validated = $this->validateLaundryUpdate($request);
+            $this->updateLaundryData($laundry, $validated);
+
+            $successMessage = Helper::messageSuccess('Laundry updated');
+            return redirect()->route('admin.laundries.view', $laundry)->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Approve pending laundry
+     */
+    public function approveLaundry(Request $request, Laundry $laundry)
+    {
+        try {
+            $laundry->user->update(['status' => 'approved']);
+            
+            $successMessage = Helper::messageSuccess('Laundry approved');
+            return redirect()->back()->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Reject pending laundry
+     */
+    public function rejectLaundry(Request $request, Laundry $laundry)
+    {
+        try {
+            $laundry->user->update(['status' => 'rejected']);
+            
+            $successMessage = Helper::messageSuccess('Laundry rejected');
+            return redirect()->back()->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Update laundry status
+     */
+    public function updateLaundryStatus(Request $request, Laundry $laundry)
+    {
+        try {
+            $request->validate([
+                'status' => 'required|in:approved,pending,rejected,suspended'
+            ]);
+
+            $oldStatus = $laundry->user->status;
+            $newStatus = $request->status;
+            
+            $laundry->user->update(['status' => $newStatus]);
+            
+            $statusMessages = [
+                'approved' => 'تم تفعيل المغسلة بنجاح',
+                'pending' => 'تم وضع المغسلة في قائمة الانتظار',
+                'rejected' => 'تم رفض المغسلة',
+                'suspended' => 'تم تعليق المغسلة'
+            ];
+            
+            $successMessage = Helper::messageSuccess($statusMessages[$newStatus] ?? 'تم تحديث حالة المغسلة بنجاح');
+            return redirect()->back()->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Show pending laundries
+     */
+    public function pendingLaundries()
+    {
+        try {
+            $pendingLaundries = Laundry::whereHas('user', function($query) {
+                $query->where('status', 'pending');
+            })->with(['user', 'city'])->paginate(15);
+
+            // Ensure translatable fields are properly set for each laundry
+            foreach ($pendingLaundries as $laundry) {
+                $this->ensureTranslatableFields($laundry);
+                if ($laundry->city) {
+                    $this->ensureTranslatableFields($laundry->city);
+                }
+            }
+
+            return view('admin.laundries.pending', compact('pendingLaundries'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Show rejected laundries
+     */
+    public function rejectedLaundries()
+    {
+        try {
+            $rejectedLaundries = Laundry::whereHas('user', function($query) {
+                $query->where('status', 'rejected');
+            })->with(['user', 'city'])->paginate(15);
+
+            // Ensure translatable fields are properly set for each laundry
+            foreach ($rejectedLaundries as $laundry) {
+                $this->ensureTranslatableFields($laundry);
+                if ($laundry->city) {
+                    $this->ensureTranslatableFields($laundry->city);
+                }
+            }
+
+            return view('admin.laundries.rejected', compact('rejectedLaundries'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Show create laundry form
+     */
+    public function createLaundry()
+    {
+        try {
+            $cities = \App\Models\City::all();
+            return view('admin.laundries.create', compact('cities'));
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->with('error', $errorMessage['message']);
+        }
+    }
+
+    /**
+     * Store new laundry
+     */
+    public function storeLaundry(Request $request)
+    {
+        try {
+            $validated = $this->validateLaundryCreation($request);
+            $user = $this->createLaundryUser($validated);
+            $laundry = $this->createLaundryProfile($user, $validated);
+
+            $successMessage = Helper::messageSuccess('Laundry created');
+            return redirect()->route('admin.laundries')->with('success', $successMessage['message']);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
+        }
+    }
+
+    // ==================== ORDER MANAGEMENT ====================
 
     /**
      * Show orders management page
@@ -137,9 +506,7 @@ class AdminController extends Controller
         }
     }
 
-
-
-    // ==================== USER MANAGEMENT FUNCTIONS ====================
+    // ==================== AGENT MANAGEMENT ====================
 
     /**
      * View user details
@@ -278,7 +645,7 @@ class AdminController extends Controller
 
         } catch (\Exception $ex) {
             $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
+            return redirect()->back()->with('error', $errorMessage['message']);
         }
     }
 
@@ -318,75 +685,16 @@ class AdminController extends Controller
         }
     }
 
-    // ==================== LAUNDRY MANAGEMENT FUNCTIONS ====================
-
     /**
-     * View laundry details
+     * Suspend agent
      */
-    public function viewLaundry(Laundry $laundry)
+    public function suspendAgent(Request $request, User $user)
     {
         try {
-            $laundry->load(['user', 'city']);
-            $this->ensureTranslatableFields($laundry);
-            
-            $data = $this->getLaundryViewData($laundry);
-            $laundryStats = $this->calculateLaundryStats($laundry);
-            
-            return view('admin.laundries.view', compact('laundry', 'data', 'laundryStats'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
+            $this->validateAgentApproval($user);
+            $this->suspendAgentUser($user);
 
-    /**
-     * Show edit laundry form
-     */
-    public function editLaundry(Laundry $laundry)
-    {
-        try {
-            $laundry->load(['user', 'city']);
-            $this->ensureTranslatableFields($laundry);
-            
-            $cities = \App\Models\City::all();
-            foreach ($cities as $city) {
-                $this->ensureTranslatableFields($city);
-            }
-            
-            return view('admin.laundries.edit', compact('laundry', 'cities'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Update laundry information
-     */
-    public function updateLaundry(Request $request, Laundry $laundry)
-    {
-        try {
-            $validated = $this->validateLaundryUpdate($request);
-            $this->updateLaundryData($laundry, $validated);
-
-            $successMessage = Helper::messageSuccess('Laundry updated');
-            return redirect()->route('admin.laundries.view', $laundry)->with('success', $successMessage['message']);
-
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Approve pending laundry
-     */
-    public function approveLaundry(Request $request, Laundry $laundry)
-    {
-        try {
-            $laundry->user->update(['status' => 'approved']);
-            
-            $successMessage = Helper::messageSuccess('Laundry approved');
+            $successMessage = Helper::messageSuccess('Agent suspended');
             return redirect()->back()->with('success', $successMessage['message']);
 
         } catch (\Exception $ex) {
@@ -396,14 +704,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Reject pending laundry
+     * Reactivate agent
      */
-    public function rejectLaundry(Request $request, Laundry $laundry)
+    public function reactivateAgent(Request $request, User $user)
     {
         try {
-            $laundry->user->update(['status' => 'rejected']);
-            
-            $successMessage = Helper::messageSuccess('Laundry rejected');
+            $this->validateAgentApproval($user);
+            $this->reactivateAgentUser($user);
+
+            $successMessage = Helper::messageSuccess('Agent reactivated');
             return redirect()->back()->with('success', $successMessage['message']);
 
         } catch (\Exception $ex) {
@@ -413,24 +722,17 @@ class AdminController extends Controller
     }
 
     /**
-     * Show pending laundries
+     * Destroy agent
      */
-    public function pendingLaundries()
+    public function destroyAgent(Agent $agent)
     {
         try {
-            $pendingLaundries = Laundry::whereHas('user', function($query) {
-                $query->where('status', 'pending');
-            })->with(['user', 'city'])->paginate(15);
+            $agentName = $agent->user->name;
+            $agent->delete();
 
-            // Ensure translatable fields are properly set for each laundry
-            foreach ($pendingLaundries as $laundry) {
-                $this->ensureTranslatableFields($laundry);
-                if ($laundry->city) {
-                    $this->ensureTranslatableFields($laundry->city);
-                }
-            }
+            $successMessage = Helper::messageSuccess("Agent '{$agentName}' deleted");
+            return redirect()->route('admin.agents')->with('success', $successMessage['message']);
 
-            return view('admin.laundries.pending', compact('pendingLaundries'));
         } catch (\Exception $ex) {
             $errorMessage = Helper::messageErrorException($ex);
             return redirect()->back()->with('error', $errorMessage['message']);
@@ -438,127 +740,45 @@ class AdminController extends Controller
     }
 
     /**
-     * Show rejected laundries
+     * Block agent
      */
-    public function rejectedLaundries()
+    public function blockAgent(Request $request, Agent $agent)
     {
         try {
-            $rejectedLaundries = Laundry::whereHas('user', function($query) {
-                $query->where('status', 'rejected');
-            })->with(['user', 'city'])->paginate(15);
-
-            // Ensure translatable fields are properly set for each laundry
-            foreach ($rejectedLaundries as $laundry) {
-                $this->ensureTranslatableFields($laundry);
-                if ($laundry->city) {
-                    $this->ensureTranslatableFields($laundry->city);
-                }
-            }
-
-            return view('admin.laundries.rejected', compact('rejectedLaundries'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Show create laundry form
-     */
-    public function createLaundry()
-    {
-        try {
-            $cities = \App\Models\City::all();
-            return view('admin.laundries.create', compact('cities'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Store new laundry
-     */
-    public function storeLaundry(Request $request)
-    {
-        try {
-            $validated = $this->validateLaundryCreation($request);
-            $user = $this->createLaundryUser($validated);
-            $laundry = $this->createLaundryProfile($user, $validated);
-
-            $successMessage = Helper::messageSuccess('Laundry created');
-            return redirect()->route('admin.laundries')->with('success', $successMessage['message']);
-
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
-        }
-    }
-
-    // ==================== SERVICE MANAGEMENT FUNCTIONS ====================
-
-    /**
-     * View service details
-     */
-    public function viewService(Service $service)
-    {
-        try {
-            return view('admin.services.view', compact('service'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Show edit service form
-     */
-    public function editService(Service $service)
-    {
-        try {
-            return view('admin.services.edit', compact('service'));
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Update service
-     */
-    public function updateService(Request $request, Service $service)
-    {
-        try {
-            $validated = $this->validateServiceUpdate($request);
-            $this->updateServiceData($service, $validated);
-
-            $successMessage = Helper::messageSuccess('Service updated');
-            return redirect()->route('admin.services.view', $service)->with('success', $successMessage['message']);
-
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->withInput()->with('error', $errorMessage['message']);
-        }
-    }
-
-    /**
-     * Delete service
-     */
-    public function deleteService(Service $service)
-    {
-        try {
-            $service->delete();
+            $agent->user->update(['status' => 'rejected']);
+            $agent->update(['is_active' => false, 'status' => 'offline']);
             
-            $successMessage = Helper::messageSuccess('Service deleted');
-            return redirect()->route('admin.services')->with('success', $successMessage['message']);
+            $successMessage = Helper::messageSuccess('Agent blocked');
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage['message']
+            ]);
 
         } catch (\Exception $ex) {
             $errorMessage = Helper::messageErrorException($ex);
-            return redirect()->back()->with('error', $errorMessage['message']);
+            return response()->json(['error' => $errorMessage['message']], 500);
         }
     }
 
-    // ==================== ORDER MANAGEMENT FUNCTIONS ====================
+    /**
+     * Activate agent
+     */
+    public function activateAgent(Request $request, Agent $agent)
+    {
+        try {
+            $agent->user->update(['status' => 'approved']);
+            
+            $successMessage = Helper::messageSuccess('Agent activated');
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage['message']
+            ]);
+
+        } catch (\Exception $ex) {
+            $errorMessage = Helper::messageErrorException($ex);
+            return response()->json(['error' => $errorMessage['message']], 500);
+        }
+    }
 
     /**
      * View order details
@@ -621,7 +841,7 @@ class AdminController extends Controller
         }
     }
 
-    // ==================== HELPER METHODS ====================
+    // ==================== HELPER & UTILITY METHODS ====================
 
     /**
      * Get dashboard statistics
@@ -912,11 +1132,13 @@ class AdminController extends Controller
         return $request->validate([
             'name' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'description_en' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0',
-            'coins' => 'nullable|numeric|min:0',
-            'is_active' => 'required|boolean'
+            'description' => 'required|string|max:1000',
+            'description_en' => 'required|string|max:1000',
+            'price' => 'nullable|numeric|min:0',
+            'coin_cost' => 'nullable|integer|min:0',
+            'type' => 'required|string|in:washing,ironing,dry_cleaning,agent_supply,laundry_service',
+            'status' => 'required|string|in:pending,active,inactive,approved,rejected',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
     }
 
@@ -939,7 +1161,7 @@ class AdminController extends Controller
         ]);
     }
 
-    // ==================== DATA UPDATE METHODS ====================
+    // ==================== DATA UPDATE & CREATION METHODS ====================
 
     /**
      * Update user data
@@ -1057,9 +1279,27 @@ class AdminController extends Controller
             'name' => Helper::translateData(request(), 'name', 'name_en'),
             'description' => Helper::translateData(request(), 'description', 'description_en'),
             'price' => $validated['price'],
-            'coins' => $validated['coins'],
-            'is_active' => $validated['is_active']
+            'coin_cost' => $validated['coin_cost'],
+            'type' => $validated['type'],
+            'status' => $validated['status']
         ]);
+
+        if (request()->hasFile('image')) {
+            $this->updateServiceImage($service, request()->file('image'));
+        }
+    }
+
+    /**
+     * Update service image
+     */
+    private function updateServiceImage(Service $service, $image): void
+    {
+        if ($service->image) {
+            Storage::delete('public/' . $service->image);
+        }
+
+        $path = $image->store('services', 'public');
+        $service->update(['image' => $path]);
     }
 
     /**
@@ -1103,7 +1343,7 @@ class AdminController extends Controller
         $order->update($updateData);
     }
 
-    // ==================== USER CREATION METHODS ====================
+    // ==================== USER CREATION & PROFILE METHODS ====================
 
     /**
      * Create user account
@@ -1278,7 +1518,7 @@ class AdminController extends Controller
         ]);
     }
 
-    // ==================== LAUNDRY CREATION METHODS ====================
+    // ==================== LAUNDRY & SERVICE CREATION METHODS ====================
 
     /**
      * Create laundry user account
@@ -1295,7 +1535,44 @@ class AdminController extends Controller
         ]);
     }
 
-    // ==================== AGENT MANAGEMENT METHODS ====================
+    /**
+     * Create service data
+     */
+    private function createServiceData(array $validated): Service
+    {
+        $serviceData = [
+            'name' => Helper::translateData(request(), 'name', 'name_en'),
+            'description' => Helper::translateData(request(), 'description', 'description_en'),
+            'price' => $validated['price'],
+            'coins' => $validated['coins'],
+            'is_active' => true,
+            'provider_id' => $validated['provider_id'],
+            'target_type' => $validated['type'] === 'laundry' ? 'laundry' : 'package',
+            'target_id' => $validated['type'] === 'laundry' ? $validated['laundry_id'] : $validated['package_id'],
+        ];
+
+        return Service::create($serviceData);
+    }
+
+    /**
+     * Validate service creation
+     */
+    private function validateServiceCreation(Request $request): array
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'description' => 'required|string|max:1000',
+            'description_en' => 'required|string|max:1000',
+            'price' => 'nullable|numeric|min:0',
+            'coin_cost' => 'nullable|integer|min:0',
+            'type' => 'required|string|in:washing,ironing,dry_cleaning,agent_supply,laundry_service',
+            'provider_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+    }
+
+    // ==================== AGENT STATUS MANAGEMENT METHODS ====================
 
     /**
      * Validate agent approval
@@ -1341,7 +1618,37 @@ class AdminController extends Controller
         }
     }
 
-    // ==================== LAUNDRY VIEW METHODS ====================
+    /**
+     * Suspend agent user
+     */
+    private function suspendAgentUser(User $user): void
+    {
+        $user->update(['status' => 'suspended']);
+
+        if ($user->agent) {
+            $user->agent->update([
+                'is_active' => false,
+                'status' => 'offline'
+            ]);
+        }
+    }
+
+    /**
+     * Reactivate agent user
+     */
+    private function reactivateAgentUser(User $user): void
+    {
+        $user->update(['status' => 'approved']);
+
+        if ($user->agent) {
+            $user->agent->update([
+                'is_active' => true,
+                'status' => 'online'
+            ]);
+        }
+    }
+
+    // ==================== LAUNDRY VIEW & STATISTICS METHODS ====================
 
     /**
      * Get laundry view data
@@ -1368,14 +1675,20 @@ class AdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $ratings = Rating::where('laundry_id', $laundry->id)
+            ->with(['customer.user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return [
             'services' => $services,
             'orders' => $orders,
-            'servicePurchases' => $servicePurchases
+            'servicePurchases' => $servicePurchases,
+            'ratings' => $ratings
         ];
     }
 
-    // ==================== UTILITY METHODS ====================
+    // ==================== UTILITY & NOTIFICATION METHODS ====================
 
     /**
      * Get default working hours
@@ -1520,42 +1833,10 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Get revenue for specific date range
-     */
-    public function getRevenueForPeriod(Request $request, Laundry $laundry)
-    {
-        try {
-            $request->validate([
-                'start_date' => 'required|date',
-                'end_date' => 'required|date|after_or_equal:start_date'
-            ]);
 
-            $startDate = $request->start_date;
-            $endDate = $request->end_date;
 
-            $revenue = Order::where('provider_id', $laundry->user_id)
-                ->where('status', 'completed')
-                ->whereNotNull('price')
-                ->where('price', '>', 0)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->sum('price');
-
-            $revenue = $revenue ?? 0;
-            
-            return response()->json([
-                'revenue' => $revenue,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'formatted_revenue' => 'ر.س ' . number_format($revenue, 2)
-            ]);
-
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return response()->json(['error' => $errorMessage['message']], 500);
-        }
-    }
-
+    // ==================== NOTIFICATION & STATUS UPDATE METHODS ====================
+    
     /**
      * Send notification to laundry
      */
@@ -1702,27 +1983,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Block agent
-     */
-    public function blockAgent(Request $request, Agent $agent)
-    {
-        try {
-            $agent->user->update(['status' => 'rejected']);
-            $agent->update(['is_active' => false, 'status' => 'offline']);
-            
-            $successMessage = Helper::messageSuccess('Agent blocked');
-            return response()->json([
-                'success' => true,
-                'message' => $successMessage['message']
-            ]);
-
-        } catch (\Exception $ex) {
-            $errorMessage = Helper::messageErrorException($ex);
-            return response()->json(['error' => $errorMessage['message']], 500);
-        }
-    }
-
-    /**
      * Send notification to agent
      */
     public function sendAgentNotification(Request $request, Agent $agent)
@@ -1732,7 +1992,10 @@ class AdminController extends Controller
                 'message' => 'required|string|max:500'
             ]);
 
-            $successMessage = Helper::messageSuccess('Notification sent');
+            // Here you would implement the actual notification logic
+            // For now, we'll just return a success message
+            
+            $successMessage = Helper::messageSuccess('Notification sent to agent');
             return response()->json([
                 'success' => true,
                 'message' => $successMessage['message']
@@ -1795,6 +2058,8 @@ class AdminController extends Controller
         }
     }
 
+    // ==================== IMAGE HANDLING METHODS ====================
+    
     /**
      * Handle image uploads for different user types
      */
@@ -1842,6 +2107,8 @@ class AdminController extends Controller
             $model->update([$attribute => $imagePath]);
         }
     }
+
+
 }
 
 

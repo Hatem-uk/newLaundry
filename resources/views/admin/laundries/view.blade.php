@@ -1,41 +1,100 @@
 @extends('layouts.admin')
 
-@section('title', 'عرض المغسلة - ' . (($nameData = json_decode($laundry->getRawOriginal('name'), true)) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name))
+@section('title', 'عرض المغسلة - ' . (($nameData = json_decode($laundry->getRawOriginal('name'), true)) ? (is_string($nameData[app()->getLocale()] ?? $laundry->name) ? ($nameData[app()->getLocale()] ?? $laundry->name) : 'مغسلة') : (is_string($laundry->name) ? $laundry->name : 'مغسلة')))
 
 @section('content')
+<div class="container-fluid">
     <!-- Page Title -->
     <div class="page-header">
         <h1>عرض تفاصيل المغسلة</h1>
-        <p>{{ ($nameData = json_decode($laundry->getRawOriginal('name'), true)) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name }}</p>
+        <p>
+            @php
+                $nameData = json_decode($laundry->getRawOriginal('name'), true);
+                $displayName = $nameData && is_array($nameData) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name;
+            @endphp
+            {{ is_string($displayName) ? $displayName : 'مغسلة' }}
+        </p>
     </div>
+
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    <!-- Error Message -->
+    @if(session('error'))
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ session('error') }}
+        </div>
+    @endif
 
     <!-- Laundry Details -->
     <div class="section-container">
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
+        <!-- Laundry Profile Header with Logo -->
+        <div class="laundry-profile-header">
+            <div class="laundry-avatar">
+                @if($laundry->logo)
+                    <img src="{{ asset('storage/' . $laundry->logo) }}" alt="شعار المغسلة" class="profile-image" 
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="default-avatar" style="display: none;">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                @else
+                    <div class="default-avatar">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                @endif
             </div>
-        @endif
+            <div class="laundry-info">
+                <h2>
+                    @php
+                        $nameData = json_decode($laundry->getRawOriginal('name'), true);
+                        $displayName = $nameData && is_array($nameData) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name;
+                    @endphp
+                    {{ is_string($displayName) ? $displayName : 'مغسلة' }}
+                </h2>
+                <p class="laundry-role">
+                    <span class="role-badge laundry">مغسلة</span>
+                </p>
+                @if($laundry->logo)
+                    <small class="image-info">شعار المغسلة متاح</small>
+                @else
+                    <small class="image-info">لا يوجد شعار</small>
+                @endif
+            </div>
+        </div>
 
         <!-- Basic Information -->
         <div class="info-section">
-            <h3>المعلومات الأساسية</h3>
+            <div class="section-header">
+                <h3><i class="fas fa-info-circle"></i> المعلومات الأساسية</h3>
+            </div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span class="info-label">اسم المغسلة:</span>
-                    <span class="info-value">{{ ($nameData = json_decode($laundry->getRawOriginal('name'), true)) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name }}</span>
+                    <div class="info-label">اسم المغسلة</div>
+                    <div class="info-value">
+                        @php
+                            $nameData = json_decode($laundry->getRawOriginal('name'), true);
+                            $displayName = $nameData && is_array($nameData) ? ($nameData[app()->getLocale()] ?? $laundry->name) : $laundry->name;
+                        @endphp
+                        {{ is_string($displayName) ? $displayName : 'غير محدد' }}
+                    </div>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">البريد الإلكتروني:</span>
-                    <span class="info-value">{{ $laundry->user->email }}</span>
+                    <div class="info-label">البريد الإلكتروني</div>
+                    <div class="info-value">{{ $laundry->user && is_string($laundry->user->email) ? $laundry->user->email : 'غير محدد' }}</div>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">رقم الهاتف:</span>
-                    <span class="info-value">{{ $laundry->phone }}</span>
+                    <div class="info-label">رقم الهاتف</div>
+                    <div class="info-value">{{ is_string($laundry->phone) ? $laundry->phone : 'غير محدد' }}</div>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">الحالة:</span>
-                    <span class="status-badge {{ $laundry->user->status }}">
+                    <div class="info-label">حالة الحساب</div>
+                    <div class="info-value">
                         @switch($laundry->user->status)
                             @case('approved')
                                 <span class="status-badge active">نشط</span>
@@ -44,366 +103,385 @@
                                 <span class="status-badge pending">في الانتظار</span>
                                 @break
                             @case('rejected')
-                                <span class="status-badge blocked">مرفوض</span>
+                                <span class="status-badge rejected">مرفوض</span>
                                 @break
                             @default
                                 <span class="status-badge inactive">غير نشط</span>
                         @endswitch
-                    </span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">حالة المغسلة</div>
+                    <div class="info-value">
+                        @switch($laundry->status)
+                            @case('online')
+                                <span class="status-badge active">متصل</span>
+                                @break
+                            @case('offline')
+                                <span class="status-badge inactive">غير متصل</span>
+                                @break
+                            @case('maintenance')
+                                <span class="status-badge pending">صيانة</span>
+                                @break
+                            @default
+                                <span class="status-badge inactive">غير محدد</span>
+                        @endswitch
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Location Information -->
         <div class="info-section">
-            <h3>معلومات الموقع</h3>
+            <div class="section-header">
+                <h3><i class="fas fa-map-marker-alt"></i> معلومات الموقع</h3>
+            </div>
             <div class="info-grid">
                 <div class="info-item">
-                    <span class="info-label">المدينة:</span>
-                    <span class="info-value">{{ $laundry->city->name ?? 'غير محدد' }}</span>
+                    <div class="info-label">المدينة</div>
+                    <div class="info-value">{{ $laundry->city && is_string($laundry->city->name) ? $laundry->city->name : 'غير محدد' }}</div>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">العنوان:</span>
-                    <span class="info-value">{{ ($addressData = json_decode($laundry->getRawOriginal('address'), true)) ? ($addressData[app()->getLocale()] ?? $laundry->address) : $laundry->address }}</span>
+                    <div class="info-label">العنوان</div>
+                    <div class="info-value">{{ is_string($laundry->address) ? $laundry->address : 'غير محدد' }}</div>
                 </div>
-                @if($laundry->latitude && $laundry->longitude)
                 <div class="info-item">
-                    <span class="info-label">الإحداثيات:</span>
-                    <span class="info-value">{{ $laundry->latitude }}, {{ $laundry->longitude }}</span>
+                    <div class="info-label">خط الطول</div>
+                    <div class="info-value">{{ is_numeric($laundry->longitude) ? number_format($laundry->longitude, 6) : 'غير محدد' }}</div>
                 </div>
-                @endif
+                <div class="info-item">
+                    <div class="info-label">خط العرض</div>
+                    <div class="info-value">{{ is_numeric($laundry->latitude) ? number_format($laundry->latitude, 6) : 'غير محدد' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">ساعات العمل</div>
+                    <div class="info-value">
+                        @if($laundry->working_hours)
+                            @php
+                                $hours = is_array($laundry->working_hours) ? $laundry->working_hours : json_decode($laundry->working_hours, true);
+                            @endphp
+                            @if($hours && is_array($hours))
+                                @foreach($hours as $day => $time)
+                                    <div>{{ is_string($day) ? $day : 'يوم' }}: {{ is_string($time) ? $time : 'متاح' }}</div>
+                                @endforeach
+                            @else
+                                متاح
+                            @endif
+                        @else
+                            غير محدد
+                        @endif
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">خدمة التوصيل</div>
+                    <div class="info-value">
+                        @if($laundry->delivery_available)
+                            <span class="status-badge active">متاحة</span>
+                        @else
+                            <span class="status-badge inactive">غير متاحة</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">خدمة الاستلام</div>
+                    <div class="info-value">
+                        @if($laundry->pickup_available)
+                            <span class="status-badge active">متاحة</span>
+                        @else
+                            <span class="status-badge inactive">غير متاحة</span>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Business Information -->
+        <!-- Social Media Links -->
+        @if($laundry->facebook || $laundry->instagram || $laundry->whatsapp)
         <div class="info-section">
-            <h3>معلومات العمل</h3>
-            <div class="info-grid">
-                @if($laundry->description)
-                <div class="info-item full-width">
-                    <span class="info-label">الوصف:</span>
-                    <span class="info-value">{{ is_string($laundry->description) ? $laundry->description : '' }}</span>
-                </div>
-                @endif
-                @if($laundry->working_hours)
-                <div class="info-item">
-                    <span class="info-label">ساعات العمل:</span>
-                    <span class="info-value">{{ is_string($laundry->working_hours) ? $laundry->working_hours : '' }}</span>
-                </div>
-                @endif
-                @if($laundry->delivery_radius)
-                <div class="info-item">
-                    <span class="info-label">نطاق التوصيل:</span>
-                    <span class="info-value">{{ $laundry->delivery_radius }} كم</span>
-                </div>
-                @endif
-                <div class="info-item">
-                    <span class="info-label">نشط:</span>
-                    <span class="status-badge {{ $laundry->is_active ? 'active' : 'inactive' }}">
-                        {{ $laundry->is_active ? 'نعم' : 'لا' }}
-                    </span>
-                </div>
+            <div class="section-header">
+                <h3><i class="fas fa-share-alt"></i> روابط التواصل الاجتماعي</h3>
             </div>
-        </div>
-
-        <!-- Contact Information -->
-        @if($laundry->website || $laundry->facebook || $laundry->instagram || $laundry->whatsapp)
-        <div class="info-section">
-            <h3>معلومات التواصل</h3>
-            <div class="info-grid">
-                @if($laundry->website)
-                <div class="info-item">
-                    <span class="info-label">الموقع الإلكتروني:</span>
-                    <span class="info-value">
-                        <a href="{{ $laundry->website }}" target="_blank" class="link">{{ $laundry->website }}</a>
-                    </span>
-                </div>
-                @endif
+            <div class="social-links">
                 @if($laundry->facebook)
-                <div class="info-item">
-                    <span class="info-label">فيسبوك:</span>
-                    <span class="info-value">
-                        <a href="{{ $laundry->facebook }}" target="_blank" class="link">{{ $laundry->facebook }}</a>
-                    </span>
-                </div>
+                    <a href="{{ $laundry->facebook }}" target="_blank" class="social-link facebook">
+                        <i class="fab fa-facebook"></i>
+                        فيسبوك
+                    </a>
                 @endif
                 @if($laundry->instagram)
-                <div class="info-item">
-                    <span class="info-label">انستغرام:</span>
-                    <span class="info-value">
-                        <a href="{{ $laundry->instagram }}" target="_blank" class="link">{{ $laundry->instagram }}</a>
-                    </span>
-                </div>
+                    <a href="{{ $laundry->instagram }}" target="_blank" class="social-link instagram">
+                        <i class="fab fa-instagram"></i>
+                        انستغرام
+                    </a>
                 @endif
                 @if($laundry->whatsapp)
-                <div class="info-item">
-                    <span class="info-label">واتساب:</span>
-                    <span class="info-value">
-                        <a href="https://wa.me/{{ $laundry->whatsapp }}" target="_blank" class="link">{{ $laundry->whatsapp }}</a>
-                    </span>
-                </div>
+                    <a href="https://wa.me/{{ $laundry->whatsapp }}" target="_blank" class="social-link whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        واتساب
+                    </a>
                 @endif
             </div>
         </div>
         @endif
 
-        <!-- Statistics -->
-        <div class="info-section">
-            <h3>الإحصائيات</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">{{ $laundry->orders_count ?? 0 }}</div>
-                    <div class="stat-label">إجمالي الطلبات</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ $laundry->services_count ?? 0 }}</div>
-                    <div class="stat-label">الخدمات المتاحة</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">{{ $laundry->rating ?? 'غير محدد' }}</div>
-                    <div class="stat-label">التقييم</div>
-                </div>
-            </div>
+
+
+
+
+        <!-- Status Change -->
+        <div class="status-dropdown">
+            <span class="status-label">تغيير الحالة:</span>
+            <select class="status-select" 
+                    data-entity-id="{{ $laundry->id }}" 
+                    data-entity-type="laundry"
+                    onchange="window.adminViewForm.changeEntityStatus({{ $laundry->id }}, this.value, 'laundry')">
+                <option value="">اختر الحالة</option>
+                <option value="approved" {{ $laundry->user->status == 'approved' ? 'selected' : '' }}>نشط</option>
+                <option value="pending" {{ $laundry->user->status == 'pending' ? 'selected' : '' }}>في الانتظار</option>
+                <option value="rejected" {{ $laundry->user->status == 'rejected' ? 'selected' : '' }}>مرفوض</option>
+                <option value="suspended" {{ $laundry->user->status == 'suspended' ? 'selected' : '' }}>معلق</option>
+            </select>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
+        <!-- Actions -->
+        <div class="action-section">
             <a href="{{ route('admin.laundries.edit', $laundry) }}" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
-                تعديل المغسلة
+                تعديل
             </a>
-            
-            @if($laundry->user->status === 'pending')
-                <form method="POST" action="{{ route('admin.laundries.approve', $laundry) }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check"></i>
-                        الموافقة
-                    </button>
-                </form>
-                <form method="POST" action="{{ route('admin.laundries.reject', $laundry) }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-times"></i>
-                        الرفض
-                    </button>
-                </form>
-            @endif
-
-            @if($laundry->user->status === 'approved')
-                <form method="POST" action="{{ route('admin.laundries.suspend', $laundry) }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-warning">
-                        <i class="fas fa-pause"></i>
-                        تعليق
-                    </button>
-                </form>
-            @endif
-
-            @if($laundry->user->status === 'suspended')
-                <form method="POST" action="{{ route('admin.laundries.reactivate', $laundry) }}" style="display: inline;">
-                    @csrf
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-play"></i>
-                        إعادة التفعيل
-                    </button>
-                </form>
-            @endif
-
             <a href="{{ route('admin.laundries') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-right"></i>
+                <i class="fas fa-arrow-left"></i>
                 العودة للقائمة
             </a>
         </div>
     </div>
+
+    <!-- Services Section -->
+    <div class="section-container">
+        <div class="section-header">
+            <h3><i class="fas fa-tshirt"></i> الخدمات المقدمة</h3>
+        </div>
+        
+        @if($laundry->services()->count() > 0)
+            <div class="services-grid">
+                @foreach($laundry->services()->get() as $service)
+                <div class="service-card">
+                    <div class="service-header">
+                        @if($service->image)
+                            <img src="{{ asset('storage/' . $service->image) }}" alt="{{ $service->name }}" class="service-image">
+                        @else
+                            <div class="default-service-image">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                        @endif
+                        <div class="service-status">
+                            {{ $service->status == 'active' ? 'نشط' : 'غير نشط' }}
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h4>{{ $service->name }}</h4>
+                        <div class="service-description">{{ $service->description ?? 'لا يوجد وصف' }}</div>
+                        <div class="service-details">
+                            <div class="service-price">
+                                <span class="price-label">السعر:</span>
+                                <span class="price-value">{{ $service->price ?? 0 }} ريال</span>
+                            </div>
+                            <div class="service-coins">
+                                <span class="coins-label">النقاط:</span>
+                                <span class="coins-value">{{ $service->coin_cost ?? 0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-actions">
+                        <a href="{{ route('admin.services.edit', $service) }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i>
+                            تعديل
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        @else
+            <div class="no-data">
+                <i class="fas fa-tshirt"></i>
+                <p>لا توجد خدمات متاحة</p>
+            </div>
+        @endif
+    </div>
+
+            
+
+        <!-- Orders Section -->
+        <div class="section-container">
+            <div class="section-header">
+                <h3><i class="fas fa-shopping-cart"></i> تفاصيل الطلبات</h3>
+            </div>
+        
+        @if($laundry->orders()->count() > 0)
+            <div class="orders-table">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th data-sortable>رقم الطلب</th>
+                            <th data-sortable>العميل</th>
+                            <th data-sortable>نوع الخدمة</th>
+                            <th data-sortable>المبلغ</th>
+                            <th data-sortable>الحالة</th>
+                            <th data-sortable>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($laundry->orders()->with(['user'])->latest()->get() as $order)
+                        <tr>
+                            <td>#{{ $order->id }}</td>
+                            <td>{{ $order->user->name ?? 'غير محدد' }}</td>
+                            <td>
+                                @if($order->target_type === 'App\Models\Service')
+                                    <span class="badge badge-service">خدمة</span>
+                                @elseif($order->target_type === 'App\Models\Package')
+                                    <span class="badge badge-package">باقة</span>
+                                @else
+                                    <span class="badge badge-other">{{ $order->target_type }}</span>
+                                @endif
+                            </td>
+                            <td class="order-amount">
+                                @if($order->coins > 0)
+                                    <span class="coins">{{ $order->coins }} نقطة</span>
+                                @endif
+                                @if($order->price > 0)
+                                    <span class="price">{{ $order->price }} ريال</span>
+                                @endif
+                            </td>
+                            <td>
+                                @switch($order->status)
+                                    @case('pending')
+                                        <span class="status-badge order-pending">في الانتظار</span>
+                                        @break
+                                    @case('in_process')
+                                        <span class="status-badge order-in_process">قيد المعالجة</span>
+                                        @break
+                                    @case('completed')
+                                        <span class="status-badge order-completed">مكتمل</span>
+                                        @break
+                                    @case('canceled')
+                                        <span class="status-badge order-canceled">ملغي</span>
+                                        @break
+                                    @default
+                                        <span class="status-badge">{{ $order->status }}</span>
+                                @endswitch
+                            </td>
+                            <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="no-data">
+                <i class="fas fa-shopping-cart"></i>
+                <p>لا توجد طلبات</p>
+            </div>
+        @endif
+    </div>
+
+    <!-- Ratings Section -->
+    <div class="section-container">
+        <div class="section-header">
+            <h3><i class="fas fa-star"></i> التقييمات</h3>
+        </div>
+        
+        @if($laundry->ratings()->count() > 0)
+            <!-- Ratings Summary -->
+            <div class="ratings-summary">
+                <div class="overall-rating">
+                    @php
+                        $averageRating = $laundry->ratings()->avg('rating') ?? 0;
+                        $totalRatings = $laundry->ratings()->count();
+                    @endphp
+                    <div class="rating-number">{{ number_format($averageRating, 1) }}</div>
+                    <div class="rating-stars-large">
+                        @for($i = 1; $i <= 5; $i++)
+                            <i class="fas fa-star {{ $i <= $averageRating ? 'filled' : '' }}"></i>
+                        @endfor
+                    </div>
+                    <div class="total-ratings-large">{{ $totalRatings }} تقييم</div>
+                </div>
+                
+                <div class="rating-breakdown">
+                    @for($rating = 5; $rating >= 1; $rating--)
+                        @php
+                            $count = $laundry->ratings()->where('rating', $rating)->count();
+                            $percentage = $totalRatings > 0 ? ($count / $totalRatings) * 100 : 0;
+                        @endphp
+                        <div class="rating-bar">
+                            <span class="rating-label">{{ $rating }} نجوم</span>
+                            <div class="rating-progress">
+                                <div class="progress-bar" style="width: {{ $percentage }}%"></div>
+                            </div>
+                            <span class="rating-count">{{ $count }}</span>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+
+            <!-- Recent Ratings -->
+            <div class="recent-ratings">
+                <h4>التقييمات الحديثة</h4>
+                <div class="ratings-list">
+                    @foreach($laundry->ratings()->with(['customer.user'])->latest()->take(5)->get() as $rating)
+                    <div class="rating-item">
+                        <div class="rating-header">
+                            <div class="customer-info">
+                                <div class="customer-avatar">
+                                    {{ substr($rating->customer->user->name ?? 'U', 0, 1) }}
+                                </div>
+                                <div class="customer-details">
+                                    <div class="customer-name">{{ $rating->customer->user->name ?? 'غير محدد' }}</div>
+                                    <div class="rating-date">{{ $rating->created_at->format('Y-m-d') }}</div>
+                                </div>
+                            </div>
+                            <div class="rating-score">
+                                <div class="stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star {{ $i <= $rating->rating ? 'filled' : '' }}"></i>
+                                    @endfor
+                                </div>
+                                <div class="score">{{ $rating->rating }}/5</div>
+                            </div>
+                        </div>
+                        <div class="rating-comment">{{ $rating->comment ?? 'لا يوجد تعليق' }}</div>
+                        @if($rating->service_type === 'service')
+                            <div class="service-type-badge">
+                                <i class="fas fa-tshirt"></i>
+                                خدمة
+                            </div>
+                        @elseif($rating->service_type === 'package')
+                            <div class="service-type-badge">
+                                <i class="fas fa-box"></i>
+                                باقة
+                            </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        @else
+            <div class="no-data">
+                <i class="fas fa-star"></i>
+                <p>لا توجد تقييمات</p>
+            </div>
+        @endif
+    </div>
+</div>
 @endsection
 
 @push('styles')
-<style>
-    .info-section {
-        background: #fff;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+    <link rel="stylesheet" href="{{ asset('css/admin-view-forms.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-laundry-view.css') }}">
+    
+@endpush
 
-    .info-section h3 {
-        margin: 0 0 15px 0;
-        color: #333;
-        font-size: 18px;
-        border-bottom: 2px solid #007bff;
-        padding-bottom: 8px;
-    }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-    }
-
-    .info-item {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .info-item.full-width {
-        grid-column: 1 / -1;
-    }
-
-    .info-label {
-        font-weight: 600;
-        color: #666;
-        font-size: 14px;
-    }
-
-    .info-value {
-        color: #333;
-        font-size: 16px;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        text-transform: uppercase;
-    }
-
-    .status-badge.active {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .status-badge.pending {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .status-badge.blocked, .status-badge.rejected {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    .status-badge.inactive {
-        background: #e2e3e5;
-        color: #383d41;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-        margin-top: 15px;
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 20px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-    }
-
-    .stat-number {
-        font-size: 24px;
-        font-weight: 700;
-        color: #007bff;
-        margin-bottom: 5px;
-    }
-
-    .stat-label {
-        font-size: 14px;
-        color: #666;
-    }
-
-    .link {
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .link:hover {
-        text-decoration: underline;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #dee2e6;
-    }
-
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #0056b3;
-    }
-
-    .btn-success {
-        background: #28a745;
-        color: white;
-    }
-
-    .btn-success:hover {
-        background: #1e7e34;
-    }
-
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #c82333;
-    }
-
-    .btn-warning {
-        background: #ffc107;
-        color: #212529;
-    }
-
-    .btn-warning:hover {
-        background: #e0a800;
-    }
-
-    .btn-secondary {
-        background: #6c757d;
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: #545b62;
-    }
-
-    .btn-outline {
-        background: transparent;
-        color: #6c757d;
-        border: 1px solid #6c757d;
-    }
-
-    .btn-outline:hover {
-        background: #6c757d;
-        color: white;
-    }
-</style>
+@push('scripts')
+    <script src="{{ asset('js/admin-view-forms.js') }}"></script>
+    
 @endpush

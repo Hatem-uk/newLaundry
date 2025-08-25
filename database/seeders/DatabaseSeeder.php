@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             LaundrySeeder::class,     // Then laundries
             ServiceSeeder::class,     // Then services
             PackageSeeder::class,     // Then coin packages
+            OrderSeeder::class,       // Then orders (depends on customers, services)
             RatingSeeder::class,      // Then ratings (depends on customers, laundries, orders)
         ]);
     }

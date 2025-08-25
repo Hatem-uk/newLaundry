@@ -58,7 +58,7 @@ Route::get('language/{locale}', function ($locale) {
             Route::get('laundries/{laundry}/view', [AdminController::class, 'viewLaundry'])->name('admin.laundries.view');
             Route::get('laundries/{laundry}/edit', [AdminController::class, 'editLaundry'])->name('admin.laundries.edit');
             Route::put('laundries/{laundry}', [AdminController::class, 'updateLaundry'])->name('admin.laundries.update');
-            Route::post('laundries/{laundry}/revenue', [AdminController::class, 'getRevenueForPeriod'])->name('admin.laundries.revenue');
+            
             
             // Laundry status management routes
             Route::get('laundries/pending', [AdminController::class, 'pendingLaundries'])->name('admin.laundries.pending');
@@ -74,8 +74,11 @@ Route::get('language/{locale}', function ($locale) {
             Route::post('laundries/{laundry}/status', [AdminController::class, 'updateLaundryStatus'])->name('admin.laundries.status');
             Route::get('laundries/{laundry}/details', [AdminController::class, 'getLaundryDetails'])->name('admin.laundries.details');
             Route::get('laundries/{laundry}/orders', [AdminController::class, 'getLaundryOrders'])->name('admin.laundries.orders');
+            Route::get('laundries/{laundry}/test', [AdminController::class, 'testLaundryRoute'])->name('admin.laundries.test');
             Route::delete('laundries/{laundry}', [AdminController::class, 'destroyLaundry'])->name('admin.laundries.destroy');
             Route::get('services', [AdminController::class, 'services'])->name('admin.services');
+Route::get('services/create', [AdminController::class, 'createService'])->name('admin.services.create');
+Route::post('services', [AdminController::class, 'storeService'])->name('admin.services.store');
 Route::get('services/{service}/view', [AdminController::class, 'viewService'])->name('admin.services.view');
 Route::get('services/{service}/edit', [AdminController::class, 'editService'])->name('admin.services.edit');
 Route::put('services/{service}', [AdminController::class, 'updateService'])->name('admin.services.update');

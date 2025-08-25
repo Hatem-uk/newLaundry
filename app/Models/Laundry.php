@@ -48,6 +48,7 @@ class Laundry extends Model
     public function workers() { return $this->hasMany(Worker::class); }
     public function services() { return $this->hasMany(Service::class, 'provider_id', 'user_id'); }
     public function ratings() { return $this->hasMany(Rating::class); }
+    public function orders() { return $this->hasMany(Order::class, 'provider_id', 'user_id'); }
 
     /**
      * Scope to get only online laundries
