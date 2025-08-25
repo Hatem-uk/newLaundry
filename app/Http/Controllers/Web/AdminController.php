@@ -309,7 +309,32 @@ class AdminController extends Controller
                 $this->ensureTranslatableFields($city);
             }
             
-            return view('admin.laundries.edit', compact('laundry', 'cities'));
+            // Prepare data for the view
+            $laundryData = [
+                'laundry' => $laundry,
+                'cities' => $cities,
+                'name_ar' => json_decode($laundry->getRawOriginal('name'), true)['ar'] ?? '',
+                'name_en' => json_decode($laundry->getRawOriginal('name'), true)['en'] ?? '',
+                'address_ar' => json_decode($laundry->getRawOriginal('address'), true)['ar'] ?? '',
+                'address_en' => json_decode($laundry->getRawOriginal('address'), true)['en'] ?? '',
+                'phone' => $laundry->phone,
+                'email' => $laundry->user->email,
+                'city_id' => $laundry->city_id,
+                'status' => $laundry->status,
+                'is_active' => $laundry->is_active,
+                'description' => $laundry->description,
+                'working_hours' => $laundry->working_hours,
+                'delivery_radius' => $laundry->delivery_radius,
+                'website' => $laundry->website,
+                'facebook' => $laundry->facebook,
+                'instagram' => $laundry->instagram,
+                'whatsapp' => $laundry->whatsapp,
+                'latitude' => $laundry->latitude,
+                'longitude' => $laundry->longitude,
+                'logo' => $laundry->logo,
+            ];
+            
+            return view('admin.laundries.edit', $laundryData);
         } catch (\Exception $ex) {
             $errorMessage = Helper::messageErrorException($ex);
             return redirect()->back()->with('error', $errorMessage['message']);
@@ -456,6 +481,12 @@ class AdminController extends Controller
     {
         try {
             $cities = \App\Models\City::all();
+            
+            // Ensure translatable fields are properly set for each city
+            foreach ($cities as $city) {
+                $this->ensureTranslatableFields($city);
+            }
+            
             return view('admin.laundries.create', compact('cities'));
         } catch (\Exception $ex) {
             $errorMessage = Helper::messageErrorException($ex);
@@ -1095,15 +1126,25 @@ class AdminController extends Controller
     private function validateLaundryUpdate(Request $request): array
     {
         return $request->validate([
-            'name_ar' => 'required|string|max:255',
-            'name_en' => 'required|string|max:255',
-            'address_ar' => 'required|string|max:500',
-            'address_en' => 'required|string|max:500',
-            'phone' => 'required|string|max:20',
-            'city_id' => 'required|exists:cities,id',
-            'status' => 'required|in:online,offline,maintenance',
-            'is_active' => 'required|boolean',
-            'working_hours' => 'nullable|array',
+            'name_ar' => 'nullable|string|max:255',
+            'name_en' => 'nullable|string|max:255',
+            'address_ar' => 'nullable|string|max:500',
+            'address_en' => 'nullable|string|max:500',
+            'phone' => 'nullable|string|max:20',
+            'city_id' => 'nullable|exists:cities,id',
+            'status' => 'nullable|in:online,offline,maintenance',
+            'is_active' => 'nullable|boolean',
+            'working_hours' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'delivery_radius' => 'nullable|integer|min:1|max:50',
+            'website' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'whatsapp' => 'nullable|string|max:20',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
     }
 
@@ -1121,6 +1162,17 @@ class AdminController extends Controller
             'city_id' => 'required|exists:cities,id',
             'address' => 'required|string|max:500',
             'address_en' => 'required|string|max:500',
+            'description' => 'nullable|string|max:1000',
+            'working_hours' => 'nullable|string|max:255',
+            'delivery_radius' => 'nullable|integer|min:1|max:50',
+            'is_active' => 'nullable|boolean',
+            'website' => 'nullable|url|max:255',
+            'facebook' => 'nullable|url|max:255',
+            'instagram' => 'nullable|url|max:255',
+            'whatsapp' => 'nullable|string|max:20',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
          ]);
     }
 
@@ -1254,20 +1306,59 @@ class AdminController extends Controller
      */
     private function updateLaundryData(Laundry $laundry, array $validated): void
     {
-        $laundry->update([
+        // Get current values to preserve old data
+        $currentName = $laundry->getRawOriginal('name');
+        $currentAddress = $laundry->getRawOriginal('address');
+        
+        // Prepare update data with fallback to current values
+        $updateData = [
             'name' => [
-                'ar' => $validated['name_ar'],
-                'en' => $validated['name_en']
+                'ar' => $validated['name_ar'] ?? $currentName['ar'] ?? '',
+                'en' => $validated['name_en'] ?? $currentName['en'] ?? ''
             ],
             'address' => [
-                'ar' => $validated['address_ar'],
-                'en' => $validated['address_en']
+                'ar' => $validated['address_ar'] ?? $currentAddress['ar'] ?? '',
+                'en' => $validated['address_en'] ?? $currentAddress['en'] ?? ''
             ],
-            'phone' => $validated['phone'],
-            'city_id' => $validated['city_id'],
-            'status' => $validated['status'],
-            'is_active' => $validated['is_active'],
-         ]);
+            'phone' => $validated['phone'] ?? $laundry->phone,
+            'city_id' => $validated['city_id'] ?? $laundry->city_id,
+            'status' => $validated['status'] ?? $laundry->status,
+            'is_active' => $validated['is_active'] ?? $laundry->is_active,
+            'description' => $validated['description'] ?? $laundry->description,
+            'working_hours' => $validated['working_hours'] ?? $laundry->working_hours,
+            'delivery_radius' => $validated['delivery_radius'] ?? $laundry->delivery_radius,
+            'website' => $validated['website'] ?? $laundry->website,
+            'facebook' => $validated['facebook'] ?? $laundry->facebook,
+            'instagram' => $validated['instagram'] ?? $laundry->instagram,
+            'whatsapp' => $validated['whatsapp'] ?? $laundry->whatsapp,
+            'latitude' => $validated['latitude'] ?? $laundry->latitude,
+            'longitude' => $validated['longitude'] ?? $laundry->longitude,
+        ];
+
+        // Handle logo upload if provided
+        if (isset($validated['logo']) && $validated['logo']) {
+            // Delete old logo if exists
+            if ($laundry->logo) {
+                Helper::deleteFile($laundry->logo);
+            }
+            // Upload new logo
+            $logoPath = Helper::uploadFile(
+                $validated['logo'],
+                'laundry_logos',
+                ['jpeg', 'png', 'jpg', 'gif'],
+                2048
+            );
+            $updateData['logo'] = $logoPath;
+        }
+
+        $laundry->update($updateData);
+
+        // Handle password update if provided
+        if (isset($validated['password']) && $validated['password']) {
+            $laundry->user->update([
+                'password' => Hash::make($validated['password'])
+            ]);
+        }
     }
 
     /**
@@ -1397,9 +1488,9 @@ class AdminController extends Controller
     private function createLaundryProfile(User $user, array $validated): Laundry
     {
         $logoPath = null;
-        if (request()->hasFile('laundry_logo')) {
+        if (request()->hasFile('logo')) {
             $logoPath = Helper::uploadFile(
-                request()->file('laundry_logo'),
+                request()->file('logo'),
                 'laundry_logos',
                 ['jpeg', 'png', 'jpg', 'gif'],
                 2048
@@ -1409,11 +1500,27 @@ class AdminController extends Controller
         return Laundry::create([
             'user_id' => $user->id,
             'city_id' => $validated['city_id'],
-            'name' => Helper::translateData(request(), 'name', 'name_en'),
-            'address' => Helper::translateData(request(), 'address', 'address_en'),
+            'name' => [
+                'ar' => $validated['name'],
+                'en' => $validated['name_en']
+            ],
+            'address' => [
+                'ar' => $validated['address'],
+                'en' => $validated['address_en']
+            ],
             'phone' => $validated['phone'],
             'logo' => $logoPath,
-             'is_active' => true
+            'is_active' => $validated['is_active'] ?? true,
+            'status' => 'online',
+            'description' => $validated['description'] ?? null,
+            'working_hours' => $validated['working_hours'] ?? null,
+            'delivery_radius' => $validated['delivery_radius'] ?? 10,
+            'website' => $validated['website'] ?? null,
+            'facebook' => $validated['facebook'] ?? null,
+            'instagram' => $validated['instagram'] ?? null,
+            'whatsapp' => $validated['whatsapp'] ?? null,
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
         ]);
     }
 

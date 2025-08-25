@@ -139,11 +139,27 @@
             <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">المدينة</div>
-                    <div class="info-value">{{ $laundry->city && is_string($laundry->city->name) ? $laundry->city->name : 'غير محدد' }}</div>
+                    <div class="info-value">
+                        @if($laundry->city)
+                            @php
+                                $cityName = json_decode($laundry->city->getRawOriginal('name'), true);
+                                $displayCityName = $cityName && is_array($cityName) ? ($cityName[app()->getLocale()] ?? $cityName['ar'] ?? $cityName['en'] ?? 'غير محدد') : 'غير محدد';
+                            @endphp
+                            {{ is_string($displayCityName) ? $displayCityName : 'غير محدد' }}
+                        @else
+                            غير محدد
+                        @endif
+                    </div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">العنوان</div>
-                    <div class="info-value">{{ is_string($laundry->address) ? $laundry->address : 'غير محدد' }}</div>
+                    <div class="info-value">
+                        @php
+                            $addressData = json_decode($laundry->getRawOriginal('address'), true);
+                            $displayAddress = $addressData && is_array($addressData) ? ($addressData[app()->getLocale()] ?? $addressData['ar'] ?? $addressData['en'] ?? 'غير محدد') : 'غير محدد';
+                        @endphp
+                        {{ is_string($displayAddress) ? $displayAddress : 'غير محدد' }}
+                    </div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">خط الطول</div>
@@ -245,11 +261,11 @@
 
         <!-- Actions -->
         <div class="action-section">
-            <a href="{{ route('admin.laundries.edit', $laundry) }}" class="btn btn-primary">
+                            <a href="{{ route('admin.laundries.edit', $laundry) }}" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
                 تعديل
             </a>
-            <a href="{{ route('admin.laundries') }}" class="btn btn-secondary">
+                            <a href="{{ route('admin.laundries') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i>
                 العودة للقائمة
             </a>

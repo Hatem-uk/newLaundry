@@ -27,7 +27,7 @@
 <!-- Action Buttons -->
 <div class="action-section">
   
-    <a href="{{ route('admin.users.create') }}?role=laundry&defaults=1" class="add-btn create-user-btn">
+    <a href="{{ route('admin.laundries.create') }}?role=laundry&defaults=1" class="add-btn create-user-btn">
         <i class="fas fa-user-plus"></i>
         {{ __('dashboard.create_laundry_user') }}
     </a>
@@ -646,15 +646,15 @@ function blockLaundry(laundryId) {
 
 <!-- Hidden Forms for Laundries -->
 @foreach($laundries as $laundry)
-    <form id="approve-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.approve', $laundry) }}" style="display: none;">
-        @csrf
-    </form>
-    <form id="reject-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.reject', $laundry) }}" style="display: none;">
-        @csrf
-    </form>
-    <form id="block-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.block', $laundry) }}" style="display: none;">
-        @csrf
-    </form>
+                                    <form id="approve-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.approve', $laundry) }}" style="display: none;">
+                    @csrf
+                </form>
+                <form id="reject-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.reject', $laundry) }}" style="display: none;">
+                    @csrf
+                </form>
+                <form id="block-form-{{ $laundry->id }}" method="POST" action="{{ route('admin.laundries.block', $laundry) }}" style="display: none;">
+                    @csrf
+                </form>
 
 @endforeach
 @endpush

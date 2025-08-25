@@ -33,6 +33,14 @@ Route::group([
             Route::post('login', [AdminAuthController::class, 'login']);
         });
 
+        // Language switcher route (no authentication required)
+        Route::get('language/{locale}', function ($locale) {
+            if (in_array($locale, ['ar', 'en'])) {
+                session(['locale' => $locale]);
+            }
+            return redirect()->back();
+        })->name('language.switch');
+
         // Admin Protected Routes (requires authentication and admin role)
         Route::middleware(['auth:web', 'admin'])->group(function() {
             // Dashboard and main admin routes
@@ -46,15 +54,7 @@ Route::group([
             
             // Laundry management routes
             Route::get('laundries/create', [AdminController::class, 'createLaundry'])->name('admin.laundries.create');
-Route::post('laundries', [AdminController::class, 'storeLaundry'])->name('admin.laundries.store');
-
-// Language switcher route
-Route::get('language/{locale}', function ($locale) {
-    if (in_array($locale, ['ar', 'en'])) {
-        session(['locale' => $locale]);
-    }
-    return redirect()->back();
-})->name('language.switch');
+            Route::post('laundries', [AdminController::class, 'storeLaundry'])->name('admin.laundries.store');
             Route::get('laundries/{laundry}/view', [AdminController::class, 'viewLaundry'])->name('admin.laundries.view');
             Route::get('laundries/{laundry}/edit', [AdminController::class, 'editLaundry'])->name('admin.laundries.edit');
             Route::put('laundries/{laundry}', [AdminController::class, 'updateLaundry'])->name('admin.laundries.update');
@@ -76,19 +76,33 @@ Route::get('language/{locale}', function ($locale) {
             Route::get('laundries/{laundry}/orders', [AdminController::class, 'getLaundryOrders'])->name('admin.laundries.orders');
             Route::get('laundries/{laundry}/test', [AdminController::class, 'testLaundryRoute'])->name('admin.laundries.test');
             Route::delete('laundries/{laundry}', [AdminController::class, 'destroyLaundry'])->name('admin.laundries.destroy');
-            Route::get('services', [AdminController::class, 'services'])->name('admin.services');
-Route::get('services/create', [AdminController::class, 'createService'])->name('admin.services.create');
-Route::post('services', [AdminController::class, 'storeService'])->name('admin.services.store');
-Route::get('services/{service}/view', [AdminController::class, 'viewService'])->name('admin.services.view');
-Route::get('services/{service}/edit', [AdminController::class, 'editService'])->name('admin.services.edit');
-Route::put('services/{service}', [AdminController::class, 'updateService'])->name('admin.services.update');
-Route::delete('services/{service}', [AdminController::class, 'deleteService'])->name('admin.services.delete');
+            
+            // Services routes
+            Route::get('services', [App\Http\Controllers\Web\ServiceController::class, 'index'])->name('admin.services');
+            Route::get('services/create', [App\Http\Controllers\Web\ServiceController::class, 'create'])->name('admin.services.create');
+            Route::post('services', [App\Http\Controllers\Web\ServiceController::class, 'store'])->name('admin.services.store');
+            Route::get('services/{service}', [App\Http\Controllers\Web\ServiceController::class, 'show'])->name('admin.services.show');
+            Route::get('services/{service}/edit', [App\Http\Controllers\Web\ServiceController::class, 'edit'])->name('admin.services.edit');
+            Route::put('services/{service}', [App\Http\Controllers\Web\ServiceController::class, 'update'])->name('admin.services.update');
+            Route::delete('services/{service}', [App\Http\Controllers\Web\ServiceController::class, 'destroy'])->name('admin.services.destroy');
+            Route::patch('services/{service}/status', [App\Http\Controllers\Web\ServiceController::class, 'changeStatus'])->name('admin.services.status');
+
+            // Packages routes
+            Route::get('packages', [App\Http\Controllers\Web\PackageController::class, 'index'])->name('admin.packages');
+            Route::get('packages/create', [App\Http\Controllers\Web\PackageController::class, 'create'])->name('admin.packages.create');
+            Route::post('packages', [App\Http\Controllers\Web\PackageController::class, 'store'])->name('admin.packages.store');
+            Route::get('packages/{package}', [App\Http\Controllers\Web\PackageController::class, 'show'])->name('admin.packages.show');
+            Route::get('packages/{package}/edit', [App\Http\Controllers\Web\PackageController::class, 'edit'])->name('admin.packages.edit');
+            Route::put('packages/{package}', [App\Http\Controllers\Web\PackageController::class, 'update'])->name('admin.packages.update');
+            Route::delete('packages/{package}', [App\Http\Controllers\Web\PackageController::class, 'destroy'])->name('admin.packages.destroy');
+            Route::patch('packages/{package}/status', [App\Http\Controllers\Web\PackageController::class, 'changeStatus'])->name('admin.packages.status');
+            Route::get('packages/{package}/customers', [App\Http\Controllers\Web\PackageController::class, 'customers'])->name('admin.packages.customers');
 
 Route::get('orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('orders/{order}/view', [AdminController::class, 'viewOrder'])->name('admin.orders.view');
 Route::get('orders/{order}/edit', [AdminController::class, 'editOrder'])->name('admin.orders.edit');
 Route::put('orders/{order}', [AdminController::class, 'updateOrder'])->name('admin.orders.update');
-Route::delete('orders/{order}', [AdminController::class, 'deleteOrder'])->name('admin.orders.delete');
+Route::delete('orders/{order}', [AdminController::class, 'deleteOrder'])->name('admin.orders.destroy');
 
 
             

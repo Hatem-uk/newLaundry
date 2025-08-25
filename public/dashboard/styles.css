@@ -557,6 +557,9 @@ body {
     .mobile-menu-toggle {
         display: block;
     }
+    .sidebar-toggle {
+        display: none;
+    }
 }
 
 /* Animation Classes */

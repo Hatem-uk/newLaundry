@@ -157,10 +157,11 @@
                     <a href="{{ route('admin.orders.view', $order) }}" class="action-btn view" title="{{ __('dashboard.View') }}">
                         <i class="fas fa-eye"></i>
                     </a>
-                    <a href="{{ route('admin.orders.edit', $order) }}" class="action-btn update" title="{{ __('dashboard.Edit') }}">
+                    <a href="{{ route('admin.orders.edit', $order) }}" class="action-btn edit" title="{{ __('dashboard.edit') }}">
                         <i class="fas fa-edit"></i>
                     </a>
-                    
+                 
+                  
                     <button class="action-btn delete" onclick="deleteOrder({{ $order->id }})" title="{{ __('dashboard.Delete') }}">
                         <i class="fas fa-trash"></i>
                     </button>
@@ -280,48 +281,21 @@
     }
     
     .actions {
-        display: flex;
-        gap: 5px;
-        justify-content: center;
-    }
+            display: flex;
+            gap: 5px;
+            
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 8px 8px;
+            font-size: 12px;
+        }
+
+        .delete-form {
+            display: inline;
+        }
     
-    .action-btn {
-        padding: 6px 8px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        font-size: 14px;
-    }
-    
-    .action-btn.view {
-        background: #007bff;
-        color: white;
-    }
-    
-    .action-btn.edit {
-        background: #28a745;
-        color: white;
-    }
-    
-    .action-btn.update {
-        background: #ffc107;
-        color: #212529;
-    }
-    
-    .action-btn.delete {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .action-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
     
     /* Table Enhancements */
     .table-container {

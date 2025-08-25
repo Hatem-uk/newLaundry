@@ -87,11 +87,20 @@ class Order extends Model
      */
     public function target()
     {
+        // Handle both lowercase and uppercase target types
+        $targetType = $this->target_type;
+        
+        // Map lowercase types to proper class names
+        if ($targetType === 'service') {
+            return $this->belongsTo(Service::class, 'target_id');
+        } elseif ($targetType === 'package') {
+            return $this->belongsTo(Package::class, 'target_id');
+        }
+        
+        // Fallback to morphTo for other cases
         return $this->morphTo('target', 'target_type', 'target_id')
             ->morphWith([
-                'package' => Package::class,
                 'Package' => Package::class,
-                'service' => Service::class,
                 'Service' => Service::class,
             ]);
     }
@@ -174,6 +183,38 @@ class Order extends Model
     public function isCanceled(): bool
     {
         return $this->status === self::STATUS_CANCELED;
+    }
+
+    /**
+     * Get target name safely
+     */
+    public function getTargetName(): string
+    {
+        try {
+            if ($this->target_type === 'service') {
+                $service = Service::find($this->target_id);
+                if ($service) {
+                    $locale = app()->getLocale();
+                    if (is_array($service->name)) {
+                        return $service->name[$locale] ?? $service->name['en'] ?? $service->name['ar'] ?? 'Service';
+                    }
+                    return $service->name;
+                }
+            } elseif ($this->target_type === 'package') {
+                $package = Package::find($this->target_id);
+                if ($package) {
+                    $locale = app()->getLocale();
+                    if (is_array($package->name)) {
+                        return $package->name[$locale] ?? $package->name['en'] ?? $package->name['ar'] ?? 'Package';
+                    }
+                    return $package->name;
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error getting target name: ' . $e->getMessage());
+        }
+        
+        return ucfirst($this->target_type ?? 'Unknown');
     }
 
     /**

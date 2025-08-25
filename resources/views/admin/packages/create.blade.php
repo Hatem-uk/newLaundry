@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'تعديل الباقة')
+@section('title', 'إضافة باقة جديدة')
 
 @section('content')
 <div class="container-fluid">
     <!-- Page Title -->
     <div class="page-header">
-        <h1>تعديل الباقة</h1>
-        <p>تحديث معلومات الباقة</p>
+        <h1>إضافة باقة جديدة</h1>
+        <p>إنشاء باقة نقاط جديدة</p>
     </div>
 
-    <!-- Edit Package Form -->
+    <!-- Create Package Form -->
     <div class="section-container">
         @if(session('success'))
             <div class="alert alert-success">
@@ -38,40 +38,37 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.packages.update', $package) }}" class="edit-form">
+        <form method="POST" action="{{ route('admin.packages.store') }}" class="create-form">
             @csrf
-            @method('PUT')
             
             <!-- Basic Information -->
             <div class="form-section">
                 <h3>المعلومات الأساسية</h3>
                 
                 <div class="form-group">
-                    <label for="name_ar">اسم الباقة (عربي)</label>
-                    <input type="text" id="name_ar" name="name_ar" class="form-input @error('name_ar') error @enderror" 
-                           value="{{ json_decode($package->getRawOriginal('name'), true)['ar'] ?? (is_string(old('name_ar')) ? old('name_ar') : '') }}">
+                    <label for="name_ar">اسم الباقة (عربي) *</label>
+                    <input type="text" id="name_ar" name="name_ar" value="{{ is_string(old('name_ar')) ? old('name_ar') : '' }}" required class="form-input">
                     @error('name_ar')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في اسم الباقة (عربي)' }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="name_en">اسم الباقة (إنجليزي)</label>
-                    <input type="text" id="name_en" name="name_en" class="form-input @error('name_en') error @enderror" 
-                           value="{{ json_decode($package->getRawOriginal('name'), true)['en'] ?? (is_string(old('name_en')) ? old('name_en') : '') }}">
+                    <label for="name_en">اسم الباقة (إنجليزي) *</label>
+                    <input type="text" id="name_en" name="name_en" value="{{ is_string(old('name_en')) ? old('name_en') : '' }}" required class="form-input">
                     @error('name_en')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في اسم الباقة (إنجليزي)' }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="type">نوع الباقة</label>
-                    <select id="type" name="type" class="form-input @error('type') error @enderror">
+                    <label for="type">نوع الباقة *</label>
+                    <select id="type" name="type" required class="form-input">
                         <option value="">اختر النوع</option>
-                        <option value="starter" {{ ($package->type == 'starter') ? 'selected' : '' }}>مبتدئ</option>
-                        <option value="premium" {{ ($package->type == 'premium') ? 'selected' : '' }}>مميز</option>
-                        <option value="bulk" {{ ($package->type == 'bulk') ? 'selected' : '' }}>كمي</option>
-                        <option value="special" {{ ($package->type == 'special') ? 'selected' : '' }}>خاص</option>
+                        <option value="starter" {{ is_string(old('type')) && old('type') == 'starter' ? 'selected' : '' }}>مبتدئ</option>
+                        <option value="premium" {{ is_string(old('type')) && old('type') == 'premium' ? 'selected' : '' }}>مميز</option>
+                        <option value="bulk" {{ is_string(old('type')) && old('type') == 'bulk' ? 'selected' : '' }}>كمي</option>
+                        <option value="special" {{ is_string(old('type')) && old('type') == 'special' ? 'selected' : '' }}>خاص</option>
                     </select>
                     @error('type')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في نوع الباقة' }}</span>
@@ -85,7 +82,7 @@
                 
                 <div class="form-group">
                     <label for="description_ar">الوصف (عربي)</label>
-                    <textarea id="description_ar" name="description_ar" class="form-input @error('description_ar') error @enderror" rows="3">{{ json_decode($package->getRawOriginal('description'), true)['ar'] ?? (is_string(old('description_ar')) ? old('description_ar') : '') }}</textarea>
+                    <textarea id="description_ar" name="description_ar" class="form-input" rows="3">{{ is_string(old('description_ar')) ? old('description_ar') : '' }}</textarea>
                     @error('description_ar')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في الوصف (عربي)' }}</span>
                     @enderror
@@ -93,7 +90,7 @@
 
                 <div class="form-group">
                     <label for="description_en">الوصف (إنجليزي)</label>
-                    <textarea id="description_en" name="description_en" class="form-input @error('description_en') error @enderror" rows="3">{{ json_decode($package->getRawOriginal('description'), true)['en'] ?? (is_string(old('description_en')) ? old('description_en') : '') }}</textarea>
+                    <textarea id="description_en" name="description_en" class="form-input" rows="3">{{ is_string(old('description_en')) ? old('description_en') : '' }}</textarea>
                     @error('description_en')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في الوصف (إنجليزي)' }}</span>
                     @enderror
@@ -105,9 +102,8 @@
                 <h3>معلومات التسعير</h3>
                 
                 <div class="form-group">
-                    <label for="price">السعر</label>
-                    <input type="number" id="price" name="price" class="form-input @error('price') error @enderror" 
-                           value="{{ $package->price ?? (is_numeric(old('price')) ? old('price') : '') }}" min="0" step="0.01">
+                    <label for="price">السعر *</label>
+                    <input type="number" id="price" name="price" value="{{ is_numeric(old('price')) ? old('price') : '' }}" min="0" step="0.01" required class="form-input">
                     <small class="form-help">السعر بالريال السعودي</small>
                     @error('price')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في السعر' }}</span>
@@ -115,9 +111,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="coins_amount">عدد النقاط</label>
-                    <input type="number" id="coins_amount" name="coins_amount" class="form-input @error('coins_amount') error @enderror" 
-                           value="{{ $package->coins_amount ?? (is_numeric(old('coins_amount')) ? old('coins_amount') : '') }}" min="1">
+                    <label for="coins_amount">عدد النقاط *</label>
+                    <input type="number" id="coins_amount" name="coins_amount" value="{{ is_numeric(old('coins_amount')) ? old('coins_amount') : '' }}" min="1" required class="form-input">
                     <small class="form-help">عدد النقاط التي سيحصل عليها العميل</small>
                     @error('coins_amount')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في عدد النقاط' }}</span>
@@ -131,9 +126,9 @@
                 
                 <div class="form-group">
                     <label for="status">حالة الباقة</label>
-                    <select id="status" name="status" class="form-input @error('status') error @enderror">
-                        <option value="active" {{ ($package->status == 'active') ? 'selected' : '' }}>نشط</option>
-                        <option value="inactive" {{ ($package->status == 'inactive') ? 'selected' : '' }}>غير نشط</option>
+                    <select id="status" name="status" class="form-input">
+                        <option value="active" {{ (is_string(old('status')) && old('status') == 'active') || old('status') === null ? 'selected' : '' }}>نشط</option>
+                        <option value="inactive" {{ is_string(old('status')) && old('status') == 'inactive' ? 'selected' : '' }}>غير نشط</option>
                     </select>
                     @error('status')
                         <span class="error-message">{{ is_string($message) ? $message : 'خطأ في حالة الباقة' }}</span>
@@ -145,13 +140,9 @@
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i>
-                    حفظ التغييرات
+                    إنشاء الباقة
                 </button>
-                <a href="{{ route('admin.packages.show', $package) }}" class="btn btn-secondary">
-                    <i class="fas fa-eye"></i>
-                    عرض الباقة
-                </a>
-                <a href="{{ route('admin.packages') }}" class="btn btn-outline">
+                <a href="{{ route('admin.packages') }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i>
                     العودة للقائمة
                 </a>

@@ -24,7 +24,15 @@ class Laundry extends Model
         'delivery_available',
         'pickup_available',
         'service_areas',
-        'specializations'
+        'specializations',
+        'description',
+        'delivery_radius',
+        'website',
+        'facebook',
+        'instagram',
+        'whatsapp',
+        'latitude',
+        'longitude'
     ];
 
     public $translatable = ['name', 'address'];
@@ -35,7 +43,10 @@ class Laundry extends Model
         'pickup_available' => 'boolean',
         'working_hours' => 'array',
         'service_areas' => 'array',
-        'specializations' => 'array'
+        'specializations' => 'array',
+        'delivery_radius' => 'integer',
+        'latitude' => 'decimal:8',
+        'longitude' => 'decimal:8'
     ];
 
     // Status constants

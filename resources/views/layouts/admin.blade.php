@@ -41,9 +41,12 @@
                 </a>
                 <a href="{{ route('admin.orders') }}" class="nav-item {{ request()->routeIs('admin.orders*') ? 'active' : '' }}" data-page="orders">
                     <i class="fas fa-list"></i>
-                    <span>{{ __('dashboard.Orders') }}</span>
+                        <span>{{ __('dashboard.Orders') }}</span>
+                    </a>
+                <a href="{{ route('admin.packages') }}" class="nav-item {{ request()->routeIs('admin.packages*') ? 'active' : '' }}" data-page="packages">
+                    <i class="fas fa-box"></i>
+                    <span>{{ __('dashboard.Packages') }}</span>
                 </a>
-
                 <a href="{{ route('admin.profile.show') }}" class="nav-item {{ request()->routeIs('admin.profile*') ? 'active' : '' }}">
                     <i class="fas fa-user-cog"></i>
                     <span>{{ __('dashboard.Profile') }}</span>

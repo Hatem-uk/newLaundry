@@ -8,6 +8,14 @@
     <h1>{{ __('dashboard.Service Management') }}</h1>
 </div>
 
+<!-- Actions -->
+<div class="actions-bar">
+    <a href="{{ route('admin.services.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        إضافة خدمة جديدة
+    </a>
+</div>
+
 <!-- Search Bar -->
 <div class="search-section">
     <div class="search-container">
@@ -23,36 +31,75 @@
             <tr>
                 <th>{{ __('dashboard.Name') }}</th>
                 <th>{{ __('dashboard.Description') }}</th>
+                <th>{{ __('dashboard.Provider') }}</th>
                 <th>{{ __('dashboard.Price') }}</th>
-                <th>{{ __('dashboard.Category') }}</th>
+                <th>{{ __('dashboard.Type') }}</th>
                 <th>{{ __('dashboard.Status') }}</th>
-                <th>{{ __('dashboard.Created At') }}</th>
                 <th>{{ __('dashboard.Actions') }}</th>
             </tr>
         </thead>
         <tbody>
             @forelse(($services ?? collect()) as $service)
             <tr>
-                <td>{{ $service->name ?? 'N/A' }}</td>
-                <td>{{ Str::limit($service->description ?? '', 50) }}</td>
+                <td>
+                    @php
+                        $nameData = json_decode($service->getRawOriginal('name'), true);
+                        $displayName = $nameData && is_array($nameData) ? ($nameData[app()->getLocale()] ?? $service->name) : $service->name;
+                    @endphp
+                    {{ is_string($displayName) ? $displayName : 'خدمة' }}
+                </td>
+                <td>
+                    @if($service->description)
+                        @php
+                            $descData = json_decode($service->getRawOriginal('description'), true);
+                            $displayDesc = $descData && is_array($descData) ? ($descData[app()->getLocale()] ?? '') : '';
+                        @endphp
+                        {{ Str::limit($displayDesc, 50) }}
+                    @else
+                        لا يوجد وصف
+                    @endif
+                </td>
+                <td>
+                    @if($service->laundry)
+                        <span class="provider-badge laundry">{{ $service->laundry->user->name ?? 'مغسلة' }}</span>
+                    @elseif($service->agent)
+                        <span class="provider-badge agent">{{ $service->agent->user->name ?? 'وكيل' }}</span>
+                    @else
+                        <span class="provider-badge unknown">غير محدد</span>
+                    @endif
+                </td>
                 <td>
                     @if($service->price)
-                        {{ number_format($service->price, 2) }} {{ __('dashboard.SAR') }}
-                    @elseif($service->coin_cost)
-                        {{ $service->coin_cost }} {{ __('dashboard.Coins') }}
-                    @else
-                        {{ __('dashboard.Free') }}
+                        <span class="price">{{ number_format($service->price, 2) }} ريال</span>
+                    @endif
+                    @if($service->coin_cost)
+                        <span class="coins">{{ $service->coin_cost }} نقطة</span>
                     @endif
                 </td>
                 <td>{{ ucfirst($service->type ?? 'N/A') }}</td>
                 <td>
-                    <span class="status-badge {{ $service->status ?? 'active' }}">
-                        {{ __('dashboard.' . ucfirst($service->status ?? 'active')) }}
-                    </span>
+                    @switch($service->status)
+                        @case('active')
+                            <span class="status-badge active">نشط</span>
+                            @break
+                        @case('pending')
+                            <span class="status-badge pending">في الانتظار</span>
+                            @break
+                        @case('approved')
+                            <span class="status-badge approved">معتمد</span>
+                            @break
+                        @case('rejected')
+                            <span class="status-badge rejected">مرفوض</span>
+                            @break
+                        @case('inactive')
+                            <span class="status-badge inactive">غير نشط</span>
+                            @break
+                        @default
+                            <span class="status-badge">{{ $service->status }}</span>
+                    @endswitch
                 </td>
-                <td>{{ $service->created_at ? $service->created_at->format('Y-m-d') : 'N/A' }}</td>
                 <td class="actions">
-                    <a href="{{ route('admin.services.view', $service) }}" class="action-btn view" title="{{ __('dashboard.View') }}">
+                    <a href="{{ route('admin.services.show', $service) }}" class="action-btn view" title="{{ __('dashboard.View') }}">
                         <i class="fas fa-eye"></i>
                     </a>
                     <a href="{{ route('admin.services.edit', $service) }}" class="action-btn edit" title="{{ __('dashboard.Edit') }}">
@@ -65,7 +112,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="text-center">{{ __('dashboard.No services found') }}</td>
+                <td colspan="7" class="text-center">لا توجد خدمات</td>
             </tr>
             @endforelse
         </tbody>
@@ -109,6 +156,105 @@
 
 @push('styles')
 <style>
+    .provider-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+    .provider-badge.laundry {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .provider-badge.agent {
+        background: #f3e5f5;
+        color: #7b1fa2;
+    }
+
+    .provider-badge.unknown {
+        background: #f5f5f5;
+        color: #616161;
+    }
+
+    .price {
+        color: #28a745;
+        font-weight: 600;
+        display: block;
+    }
+
+    .coins {
+        color: #ffc107;
+        font-weight: 600;
+        display: block;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-badge.active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-badge.approved {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-badge.inactive {
+        background: #e2e3e5;
+        color: #383d41;
+    }
+
+    .actions-bar {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #0056b3;
+        color: white;
+    }
+
     .simple-pagination {
         margin-top: 20px;
         display: flex;
@@ -182,7 +328,7 @@ document.getElementById('serviceSearch').addEventListener('input', function() {
 
 // Service management functions
 function deleteService(serviceId) {
-    if (confirm('{{ __("dashboard.Are you sure you want to delete this service?") }}')) {
+    if (confirm('هل أنت متأكد من حذف هذه الخدمة؟')) {
         fetch(`/admin/services/${serviceId}`, {
             method: 'DELETE',
             headers: {
@@ -191,7 +337,12 @@ function deleteService(serviceId) {
         }).then(response => {
             if (response.ok) {
                 location.reload();
+            } else {
+                alert('حدث خطأ أثناء حذف الخدمة');
             }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('حدث خطأ أثناء حذف الخدمة');
         });
     }
 }

@@ -11,8 +11,24 @@
 
     <!-- Edit Laundry Form -->
     <div class="section-container">
+        @if(session('success'))
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ session('error') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>أخطاء في التحقق:</strong>
                 <ul style="margin: 0; padding-right: 20px;">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -30,32 +46,30 @@
                 <h3 class="form-section-title">المعلومات الأساسية</h3>
                 
                 <div class="form-group">
-                    <label for="name">اسم المغسلة (عربي) *</label>
-                    <input type="text" id="name" name="name" class="form-input @error('name') error @enderror" value="{{ json_decode($laundry->getRawOriginal('name'), true)['ar'] ?? old('name') }}" required>
-                    @error('name')
+                    <label for="name_ar">اسم المغسلة (عربي)</label>
+                    <input type="text" id="name_ar" name="name_ar" class="form-input @error('name_ar') error @enderror" value="{{ old('name_ar', $name_ar) }}">
+                    @error('name_ar')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="name_en">اسم المغسلة (إنجليزي) *</label>
-                    <input type="text" id="name_en" name="name_en" class="form-input @error('name_en') error @enderror" value="{{ json_decode($laundry->getRawOriginal('name'), true)['en'] ?? old('name_en') }}" required>
+                    <label for="name_en">اسم المغسلة (إنجليزي)</label>
+                    <input type="text" id="name_en" name="name_en" class="form-input @error('name_en') error @enderror" value="{{ old('name_en', $name_en) }}">
                     @error('name_en')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="email">البريد الإلكتروني *</label>
-                    <input type="email" id="email" name="email" class="form-input @error('email') error @enderror" value="{{ old('email', $laundry->user->email) }}" required>
-                    @error('email')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" name="email" class="form-input @error('email') error @enderror" value="{{ old('email', $email) }}" readonly>
+                    <small class="form-help">لا يمكن تغيير البريد الإلكتروني</small>
                 </div>
 
                 <div class="form-group">
-                    <label for="phone">رقم الهاتف *</label>
-                    <input type="tel" id="phone" name="phone" class="form-input @error('phone') error @enderror" value="{{ old('phone', $laundry->phone) }}" required>
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="tel" id="phone" name="phone" class="form-input @error('phone') error @enderror" value="{{ old('phone', $phone) }}">
                     @error('phone')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -67,12 +81,16 @@
                 <h3 class="form-section-title">معلومات الموقع</h3>
                 
                 <div class="form-group">
-                    <label for="city_id">المدينة *</label>
-                    <select id="city_id" name="city_id" class="form-input @error('city_id') error @enderror" required>
+                    <label for="city_id">المدينة</label>
+                    <select id="city_id" name="city_id" class="form-input @error('city_id') error @enderror">
                         <option value="">اختر المدينة</option>
                         @foreach($cities ?? [] as $city)
-                            <option value="{{ $city->id }}" {{ old('city_id', $laundry->city_id) == $city->id ? 'selected' : '' }}>
-                                {{ $city->name }}
+                            @php
+                                $cityName = json_decode($city->getRawOriginal('name'), true);
+                                $displayCityName = $cityName && is_array($cityName) ? ($cityName[app()->getLocale()] ?? $cityName['ar'] ?? $cityName['en'] ?? 'City') : $city->name;
+                            @endphp
+                            <option value="{{ $city->id }}" {{ old('city_id', $city_id) == $city->id ? 'selected' : '' }}>
+                                {{ is_string($displayCityName) ? $displayCityName : 'City' }}
                             </option>
                         @endforeach
                     </select>
@@ -82,16 +100,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="address">العنوان (عربي) *</label>
-                    <textarea id="address" name="address" class="form-input @error('address') error @enderror" rows="3" required>{{ json_decode($laundry->getRawOriginal('address'), true)['ar'] ?? old('address') }}</textarea>
-                    @error('address')
+                    <label for="address_ar">العنوان (عربي)</label>
+                    <textarea id="address_ar" name="address_ar" class="form-input @error('address_ar') error @enderror" rows="3">{{ old('address_ar', $address_ar) }}</textarea>
+                    @error('address_ar')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="address_en">العنوان (إنجليزي) *</label>
-                    <textarea id="address_en" name="address_en" class="form-input @error('address_en') error @enderror" rows="3" required>{{ json_decode($laundry->getRawOriginal('address'), true)['en'] ?? old('address_en') }}</textarea>
+                    <label for="address_en">العنوان (إنجليزي)</label>
+                    <textarea id="address_en" name="address_en" class="form-input @error('address_en') error @enderror" rows="3">{{ old('address_en', $address_en) }}</textarea>
                     @error('address_en')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -99,7 +117,7 @@
 
                 <div class="form-group">
                     <label for="latitude">خط العرض</label>
-                    <input type="number" id="latitude" name="latitude" class="form-input @error('latitude') error @enderror" value="{{ old('latitude', $laundry->latitude) }}" step="any" placeholder="مثال: 24.7136">
+                    <input type="number" id="latitude" name="latitude" class="form-input @error('latitude') error @enderror" value="{{ old('latitude', $latitude) }}" step="any" placeholder="مثال: 24.7136">
                     @error('latitude')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -107,7 +125,7 @@
 
                 <div class="form-group">
                     <label for="longitude">خط الطول</label>
-                    <input type="number" id="longitude" name="longitude" class="form-input @error('longitude') error @enderror" value="{{ old('longitude', $laundry->longitude) }}" step="any" placeholder="مثال: 46.6753">
+                    <input type="number" id="longitude" name="longitude" class="form-input @error('longitude') error @enderror" value="{{ old('longitude', $longitude) }}" step="any" placeholder="مثال: 46.6753">
                     @error('longitude')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -120,33 +138,38 @@
                 
                 <div class="form-group">
                     <label for="description">الوصف</label>
-                    <textarea id="description" name="description" class="form-input @error('description') error @enderror" rows="4">{{ old('description', is_string($laundry->description) ? $laundry->description : '') }}</textarea>
+                    <textarea id="description" name="description" class="form-input @error('description') error @enderror" rows="4">{{ old('description', $description) }}</textarea>
                     @error('description')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <label for="working_hours">ساعات العمل</label>
-                    <input type="text" id="working_hours" name="working_hours" class="form-input @error('working_hours') error @enderror" value="{{ old('working_hours', is_string($laundry->working_hours) ? $laundry->working_hours : '') }}" placeholder="مثال: 8:00 ص - 10:00 م">
-                    @error('working_hours')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
 
                 <div class="form-group">
-                    <label for="delivery_radius">نطاق التوصيل (كم) *</label>
-                    <input type="number" id="delivery_radius" name="delivery_radius" class="form-input @error('delivery_radius') error @enderror" value="{{ old('delivery_radius', $laundry->delivery_radius ?? 10) }}" min="1" max="50" required>
+                    <label for="delivery_radius">نطاق التوصيل (كم)</label>
+                    <input type="number" id="delivery_radius" name="delivery_radius" class="form-input @error('delivery_radius') error @enderror" value="{{ old('delivery_radius', $delivery_radius ?? 10) }}" min="1" max="50">
                     @error('delivery_radius')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="form-group">
-                    <label for="is_active">الحالة *</label>
-                    <select id="is_active" name="is_active" class="form-input @error('is_active') error @enderror" required>
-                        <option value="1" {{ old('is_active', $laundry->is_active) == 1 ? 'selected' : '' }}>نشط</option>
-                        <option value="0" {{ old('is_active', $laundry->is_active) == 0 ? 'selected' : '' }}>غير نشط</option>
+                    <label for="status">حالة العمل</label>
+                    <select id="status" name="status" class="form-input @error('status') error @enderror">
+                        <option value="online" {{ old('status', $status) == 'online' ? 'selected' : '' }}>متصل</option>
+                        <option value="offline" {{ old('status', $status) == 'offline' ? 'selected' : '' }}>غير متصل</option>
+                        <option value="maintenance" {{ old('status', $status) == 'maintenance' ? 'selected' : '' }}>صيانة</option>
+                    </select>
+                    @error('status')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label for="is_active">الحالة</label>
+                    <select id="is_active" name="is_active" class="form-input @error('is_active') error @enderror">
+                        <option value="1" {{ old('is_active', $is_active) == 1 ? 'selected' : '' }}>نشط</option>
+                        <option value="0" {{ old('is_active', $is_active) == 0 ? 'selected' : '' }}>غير نشط</option>
                     </select>
                     @error('is_active')
                         <span class="error-message">{{ $message }}</span>
@@ -160,7 +183,7 @@
                 
                 <div class="form-group">
                     <label for="website">الموقع الإلكتروني</label>
-                    <input type="url" id="website" name="website" class="form-input @error('website') error @enderror" value="{{ old('website', $laundry->website) }}" placeholder="https://example.com">
+                    <input type="url" id="website" name="website" class="form-input @error('website') error @enderror" value="{{ old('website', $website) }}" placeholder="https://example.com">
                     @error('website')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -168,7 +191,7 @@
 
                 <div class="form-group">
                     <label for="facebook">فيسبوك</label>
-                    <input type="url" id="facebook" name="facebook" class="form-input @error('facebook') error @enderror" value="{{ old('facebook', $laundry->facebook) }}" placeholder="https://facebook.com/username">
+                    <input type="url" id="facebook" name="facebook" class="form-input @error('facebook') error @enderror" value="{{ old('facebook', $facebook) }}" placeholder="https://facebook.com/username">
                     @error('facebook')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -176,7 +199,7 @@
 
                 <div class="form-group">
                     <label for="instagram">انستغرام</label>
-                    <input type="url" id="instagram" name="instagram" class="form-input @error('instagram') error @enderror" value="{{ old('instagram', $laundry->instagram) }}" placeholder="https://instagram.com/username">
+                    <input type="url" id="instagram" name="instagram" class="form-input @error('instagram') error @enderror" value="{{ old('instagram', $instagram) }}" placeholder="https://instagram.com/username">
                     @error('instagram')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -184,7 +207,7 @@
 
                 <div class="form-group">
                     <label for="whatsapp">واتساب</label>
-                    <input type="tel" id="whatsapp" name="whatsapp" class="form-input @error('whatsapp') error @enderror" value="{{ old('whatsapp', $laundry->whatsapp) }}" placeholder="+966501234567">
+                    <input type="tel" id="whatsapp" name="whatsapp" class="form-input @error('whatsapp') error @enderror" value="{{ old('whatsapp', $whatsapp) }}" placeholder="+966501234567">
                     @error('whatsapp')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
@@ -197,9 +220,9 @@
                 
                 <div class="form-group">
                     <label for="logo">شعار المغسلة</label>
-                    @if($laundry->logo)
+                    @if($logo)
                         <div class="current-image">
-                            <img src="{{ asset('storage/' . $laundry->logo) }}" alt="الشعار الحالي" style="max-width: 100px; height: auto; margin-bottom: 10px;">
+                            <img src="{{ asset('storage/' . $logo) }}" alt="الشعار الحالي" style="max-width: 100px; height: auto; margin-bottom: 10px;">
                             <p>الشعار الحالي</p>
                         </div>
                     @endif
@@ -254,6 +277,56 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/admin-edit-forms.css') }}">
+    <style>
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-input.error {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        .alert ul {
+            margin: 0;
+            padding-right: 20px;
+        }
+
+        .alert li {
+            margin-bottom: 5px;
+        }
+
+        .alert i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .alert strong {
+            font-weight: 600;
+        }
+    </style>
 @endpush
 
 @push('scripts')
