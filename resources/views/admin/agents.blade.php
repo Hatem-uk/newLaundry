@@ -137,9 +137,9 @@
 @push('styles')
 <style>
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #4facfe;
         color: white;
-        padding: 30px;
+        padding: 10px;
         border-radius: 10px;
         margin-bottom: 30px;
         text-align: center;
@@ -147,7 +147,7 @@
 
     .page-header h1 {
         margin: 0 0 10px 0;
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 700;
     }
 
@@ -229,7 +229,7 @@
         align-items: center;
         gap: 8px;
         padding: 12px 24px;
-        background: #007bff;
+        background:rgb(255, 255, 255);
         color: white;
         text-decoration: none;
         border-radius: 25px;
@@ -241,8 +241,7 @@
     }
 
     .add-btn:hover {
-        background: #0056b3;
-        color: white;
+         color: white;
         text-decoration: none;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
@@ -352,6 +351,7 @@
 
     .action-btn.view {
         background: #17a2b8;
+        color: white;
     }
 
     .action-btn.view:hover {

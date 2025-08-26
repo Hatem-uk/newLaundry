@@ -280,22 +280,29 @@
         color: #721c24;
     }
     
-    .actions {
-            display: flex;
-            gap: 5px;
-            
-            flex-wrap: wrap;
-        }
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
+        text-decoration: none;
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
 
-        .btn-sm {
-            padding: 8px 8px;
-            font-size: 12px;
-        }
+    .action-btn.view {
+        background: #17a2b8;
+    }
 
-        .delete-form {
-            display: inline;
-        }
-    
+    .action-btn.view:hover {
+        background: #158c9e;
+        color: white;
+    }
     
     /* Table Enhancements */
     .table-container {

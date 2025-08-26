@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(103, 206, 250) 0%,rgb(102, 126, 234) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -32,7 +32,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(103, 206, 250) 0%,rgb(102, 126, 234) 100%);
             color: white;
             text-align: center;
             padding: 40px 30px;
@@ -93,7 +93,7 @@
 
         .submit-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg,rgb(103, 206, 250) 0%,rgb(102, 126, 234) 100%);
             color: white;
             border: none;
             padding: 15px;

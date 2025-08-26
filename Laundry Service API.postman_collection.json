@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "laundry-service-api",
+		"_postman_id": "9b94b3bc-e065-4041-82da-df7c2e004d9e",
 		"name": "Laundry Service API",
 		"description": "Complete API collection for the Laundry Service Platform with coin-based economy, package management, and service booking",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "laundry-service"
+		"_exporter_id": "29685201"
 	},
 	"item": [
 		{
@@ -30,8 +30,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/register",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "register"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
 						}
 					},
 					"response": []
@@ -56,8 +62,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/login",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "login"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
 						}
 					},
 					"response": []
@@ -82,8 +94,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/register",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "register"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
 						}
 					},
 					"response": []
@@ -108,8 +126,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/login",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "login"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
 						}
 					},
 					"response": []
@@ -130,8 +154,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/auth/logout",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "logout"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
 						}
 					},
 					"response": []
@@ -152,8 +182,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/auth/status",
-							"host": ["{{base_url}}"],
-							"path": ["api", "auth", "status"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"status"
+							]
 						}
 					},
 					"response": []
@@ -175,8 +211,13 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities",
-							"host": ["{{base_url}}"],
-							"path": ["api", "cities"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cities"
+							]
 						}
 					},
 					"response": []
@@ -193,8 +234,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities/with-laundries",
-							"host": ["{{base_url}}"],
-							"path": ["api", "cities", "with-laundries"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cities",
+								"with-laundries"
+							]
 						}
 					},
 					"response": []
@@ -211,8 +258,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities/with-agents",
-							"host": ["{{base_url}}"],
-							"path": ["api", "cities", "with-agents"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cities",
+								"with-agents"
+							]
 						}
 					},
 					"response": []
@@ -229,8 +282,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities/region/{{region_name}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "cities", "region", "{{region_name}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cities",
+								"region",
+								"{{region_name}}"
+							]
 						}
 					},
 					"response": []
@@ -247,8 +307,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/cities/regions",
-							"host": ["{{base_url}}"],
-							"path": ["api", "cities", "regions"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cities",
+								"regions"
+							]
 						}
 					},
 					"response": []
@@ -270,8 +336,13 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/packages",
-							"host": ["{{base_url}}"],
-							"path": ["api", "packages"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"packages"
+							]
 						}
 					},
 					"response": []
@@ -288,8 +359,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/packages/{{package_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "packages", "{{package_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"packages",
+								"{{package_id}}"
+							]
 						}
 					},
 					"response": []
@@ -306,8 +383,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/packages/type/{{package_type}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "packages", "type", "{{package_type}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"packages",
+								"type",
+								"{{package_type}}"
+							]
 						}
 					},
 					"response": []
@@ -336,8 +420,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/packages/purchase",
-							"host": ["{{base_url}}"],
-							"path": ["api", "packages", "purchase"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"packages",
+								"purchase"
+							]
 						}
 					},
 					"response": []
@@ -366,8 +456,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/packages/gift",
-							"host": ["{{base_url}}"],
-							"path": ["api", "packages", "gift"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"packages",
+								"gift"
+							]
 						}
 					},
 					"response": []
@@ -389,8 +485,13 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/services",
-							"host": ["{{base_url}}"],
-							"path": ["api", "services"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"services"
+							]
 						}
 					},
 					"response": []
@@ -407,8 +508,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/services/{{service_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "services", "{{service_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"services",
+								"{{service_id}}"
+							]
 						}
 					},
 					"response": []
@@ -425,8 +532,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/services/type/{{service_type}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "services", "type", "{{service_type}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"services",
+								"type",
+								"{{service_type}}"
+							]
 						}
 					},
 					"response": []
@@ -443,8 +557,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/services/laundry/{{laundry_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "services", "laundry", "{{laundry_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"services",
+								"laundry",
+								"{{laundry_id}}"
+							]
 						}
 					},
 					"response": []
@@ -478,8 +599,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders/purchase-service",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "purchase-service"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"purchase-service"
+							]
 						}
 					},
 					"response": []
@@ -500,8 +627,13 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/orders?status={{status}}&type={{type}}&limit={{limit}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							],
 							"query": [
 								{
 									"key": "status",
@@ -539,8 +671,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/orders/{{order_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "{{order_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"{{order_id}}"
+							]
 						}
 					},
 					"response": []
@@ -569,8 +707,15 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders/{{order_id}}/status",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "{{order_id}}", "status"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"{{order_id}}",
+								"status"
+							]
 						}
 					},
 					"response": []
@@ -599,8 +744,15 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/orders/{{order_id}}/cancel",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "{{order_id}}", "cancel"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"{{order_id}}",
+								"cancel"
+							]
 						}
 					},
 					"response": []
@@ -621,8 +773,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/orders/history/purchases?limit={{limit}}&status={{status}}&type={{type}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "orders", "history", "purchases"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"history",
+								"purchases"
+							],
 							"query": [
 								{
 									"key": "limit",
@@ -673,8 +832,13 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/ratings",
-							"host": ["{{base_url}}"],
-							"path": ["api", "ratings"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ratings"
+							]
 						}
 					},
 					"response": []
@@ -691,8 +855,15 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/ratings/laundry/{{laundry_id}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "ratings", "laundry", "{{laundry_id}}"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ratings",
+								"laundry",
+								"{{laundry_id}}"
+							]
 						}
 					},
 					"response": []
@@ -713,8 +884,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/ratings/customer",
-							"host": ["{{base_url}}"],
-							"path": ["api", "ratings", "customer"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"ratings",
+								"customer"
+							]
 						}
 					},
 					"response": []
@@ -740,8 +917,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/customer/profile",
-							"host": ["{{base_url}}"],
-							"path": ["api", "customer", "profile"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"profile"
+							]
 						}
 					},
 					"response": []
@@ -762,8 +945,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/customer/nearby-laundries",
-							"host": ["{{base_url}}"],
-							"path": ["api", "customer", "nearby-laundries"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"nearby-laundries"
+							]
 						}
 					},
 					"response": []
@@ -784,8 +973,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/customer/services",
-							"host": ["{{base_url}}"],
-							"path": ["api", "customer", "services"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"customer",
+								"services"
+							]
 						}
 					},
 					"response": []
@@ -811,8 +1006,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/laundry/profile",
-							"host": ["{{base_url}}"],
-							"path": ["api", "laundry", "profile"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"laundry",
+								"profile"
+							]
 						}
 					},
 					"response": []
@@ -841,8 +1042,14 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/laundry/profile",
-							"host": ["{{base_url}}"],
-							"path": ["api", "laundry", "profile"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"laundry",
+								"profile"
+							]
 						}
 					},
 					"response": []
@@ -863,8 +1070,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/laundry/orders?status={{status}}&limit={{limit}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "laundry", "orders"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"laundry",
+								"orders"
+							],
 							"query": [
 								{
 									"key": "status",
@@ -902,8 +1115,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/admin/users?role={{role}}&status={{status}}&limit={{limit}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "users"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							],
 							"query": [
 								{
 									"key": "role",
@@ -949,8 +1168,16 @@
 						},
 						"url": {
 							"raw": "{{base_url}}/api/admin/users/{{user_id}}/status",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "users", "{{user_id}}", "status"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{user_id}}",
+								"status"
+							]
 						}
 					},
 					"response": []
@@ -971,8 +1198,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/admin/orders?status={{status}}&type={{type}}&limit={{limit}}",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "orders"],
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"orders"
+							],
 							"query": [
 								{
 									"key": "status",
@@ -1010,8 +1243,14 @@
 						],
 						"url": {
 							"raw": "{{base_url}}/api/admin/statistics",
-							"host": ["{{base_url}}"],
-							"path": ["api", "admin", "statistics"]
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"statistics"
+							]
 						}
 					},
 					"response": []

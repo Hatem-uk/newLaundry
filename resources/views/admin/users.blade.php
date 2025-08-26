@@ -342,14 +342,28 @@ function confirmDelete(userId, userName) {
         display: flex;
         gap: 5px;
     }
-
     .action-btn {
-        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
         text-decoration: none;
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        cursor: pointer;
     }
 
-    .action-btn:hover {
-        text-decoration: none;
+    .action-btn.view {
+        background: #17a2b8;
+    }
+
+    .action-btn.view:hover {
+        background: #158c9e;
+        color: white;
     }
 
     .add-btn {

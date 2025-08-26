@@ -315,21 +315,19 @@ function deletePackage(packageId) {
         display: flex;
         gap: 5px;
     }
-
-    .action-btn { display: flex;
-            gap: 5px;
-            
-            flex-wrap: wrap;
+    .action-btn {
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 32px;
-        height: 32px;
+        width: 35px;
+        height: 35px;
         border: none;
-         text-decoration: none;
+        border-radius: 50%;
+        text-decoration: none;
         color: white;
         font-size: 14px;
         transition: all 0.3s ease;
-        margin: 0 2px;
+        cursor: pointer;
     }
 
     .action-btn.view {

@@ -233,32 +233,32 @@
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .btn {
+    .action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 6px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #0056b3;
-        color: white;
-    }
-
-    .simple-pagination {
-        margin-top: 20px;
-        display: flex;
         justify-content: center;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
+        text-decoration: none;
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .action-btn.view {
+        background: #17a2b8;
+    }
+
+    .action-btn.view:hover {
+        background: #158c9e;
+        color: white;
+    }
+
+    .action-btn.edit {
+        background: #ffc107;
     }
 
     .pagination-controls {

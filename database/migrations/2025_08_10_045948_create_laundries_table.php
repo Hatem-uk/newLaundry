@@ -26,6 +26,14 @@ return new class extends Migration
             $table->boolean('pickup_available')->default(true);
             $table->decimal('average_rating', 3, 2)->default(0.00); // For customer ratings
             $table->integer('total_ratings')->default(0); // Total number of ratings
+            $table->text('description')->nullable()->after('working_hours');
+            $table->integer('delivery_radius')->default(10)->after('description');
+            $table->string('website')->nullable()->after('delivery_radius');
+            $table->string('facebook')->nullable()->after('website');
+            $table->string('instagram')->nullable()->after('facebook');
+            $table->string('whatsapp')->nullable()->after('instagram');
+            $table->decimal('latitude', 10, 8)->nullable()->after('whatsapp');
+            $table->decimal('longitude', 11, 8)->nullable()->after('latitude');
             $table->timestamps();
             
             $table->index(['city_id', 'status']);

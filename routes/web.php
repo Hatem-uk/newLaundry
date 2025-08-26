@@ -174,15 +174,15 @@ Route::delete('orders/{order}', [AdminController::class, 'deleteOrder'])->name('
 
         // Agent Protected Routes (requires authentication and agent role)
         Route::middleware(['auth:web', 'agent'])->group(function() {
-            Route::get('dashboard', function() {
-                return view('agent.dashboard');
-            })->name('agent.dashboard');
+            Route::get('dashboard', [App\Http\Controllers\AgentController::class, 'dashboard'])->name('agent.dashboard');
+            Route::get('profile', [App\Http\Controllers\AgentController::class, 'profile'])->name('agent.profile');
+            Route::post('profile', [App\Http\Controllers\AgentController::class, 'updateProfile'])->name('agent.updateProfile');
+            Route::get('cities', [App\Http\Controllers\AgentController::class, 'cities'])->name('agent.cities');
+            Route::post('cities', [App\Http\Controllers\AgentController::class, 'updateCities'])->name('agent.updateCities');
+            Route::get('laundries', [App\Http\Controllers\AgentController::class, 'laundries'])->name('agent.laundries');
+            Route::get('laundries/{id}', [App\Http\Controllers\AgentController::class, 'showLaundry'])->name('agent.laundry.show');
             
             Route::post('logout', [AgentAuthController::class, 'logout'])->name('agent.logout');
-            
-            // Add agent-specific routes here
-            // Route::get('profile', [AgentController::class, 'profile'])->name('agent.profile');
-            // Route::get('orders', [AgentController::class, 'orders'])->name('agent.orders');
         });
     });
 });

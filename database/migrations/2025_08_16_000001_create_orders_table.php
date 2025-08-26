@@ -18,8 +18,7 @@ return new class extends Migration
             $table->foreignId('provider_id')->constrained('users')->onDelete('cascade'); // Seller: admin, laundry, or agent
             $table->unsignedBigInteger('target_id'); // Package ID or Service ID
             $table->enum('target_type', ['package', 'service']); // What is being purchased
-            $table->string('target_type')->change();
-            $table->integer('coins'); // Positive when granted, negative when consumed
+             $table->integer('coins'); // Positive when granted, negative when consumed
             $table->decimal('price', 12, 2)->default(0); // Cash component if any
             $table->enum('status', ['pending', 'in_process', 'completed', 'canceled'])->default('pending');
             $table->json('meta')->nullable(); // Free-form data (e.g., quantity, notes)

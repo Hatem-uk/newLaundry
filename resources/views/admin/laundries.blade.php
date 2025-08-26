@@ -171,9 +171,9 @@
 @push('styles')
 <style>
     .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #4facfe;
         color: white;
-        padding: 30px;
+        padding: 10px;
         border-radius: 10px;
         margin-bottom: 30px;
         text-align: center;
@@ -181,7 +181,7 @@
 
     .page-header h1 {
         margin: 0 0 10px 0;
-        font-size: 2.5rem;
+        font-size: 2rem;
         font-weight: 700;
     }
 
