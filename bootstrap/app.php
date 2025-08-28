@@ -15,12 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
- $middleware->alias([
+         $middleware->alias([
             'role' => RoleMiddleware::class,
             'admin' => AdminMiddleware::class,
             'agent' => AgentMiddleware::class,
             'Image' => Intervention\Image\Facades\Image::class,
             'set.locale' => \App\Http\Middleware\SetLocale::class,
+            'auth' => \App\Http\Middleware\Authenticate::class,
         ]);
           
         // Web Localization Middleware (Full stack)

@@ -1,0 +1,1949 @@
+{
+	"info": {
+		"_postman_id": "laundry-service-api-collection",
+		"name": "Laundry Service API Collection",
+		"description": "Complete Postman collection for testing Laundry Service API endpoints - Admin, Customer, Laundry, and Agent operations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"customer\",\n    \"phone\": \"+1234567890\",\n    \"city_id\": 1,\n    \"address\": \"123 Main St\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Register a new user account (customer, laundry, agent, worker, admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login to get access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "logout"]
+						},
+						"description": "Logout and revoke token"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "status"]
+						},
+						"description": "Check user authentication status"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "refresh"]
+						},
+						"description": "Refresh access token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "profile"]
+						},
+						"description": "Get user profile information"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cities",
+			"item": [
+				{
+					"name": "Get All Cities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities"]
+						},
+						"description": "Get all cities with optional search"
+					},
+					"response": []
+				},
+				{
+					"name": "Get City by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities", "1"]
+						},
+						"description": "Get specific city details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Regions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities/regions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities", "regions"]
+						},
+						"description": "Get all available regions"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities by Region",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities/region/north",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities", "region", "north"]
+						},
+						"description": "Get cities by specific region"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities with Laundries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities/with-laundries",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities", "with-laundries"]
+						},
+						"description": "Get cities with active laundries count"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities with Agents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cities/with-agents",
+							"host": ["{{base_url}}"],
+							"path": ["api", "cities", "with-agents"]
+						},
+						"description": "Get cities with active agents count"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Services",
+			"item": [
+				{
+					"name": "Get All Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services"]
+						},
+						"description": "Get all services with filters (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/pending",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "pending"]
+						},
+						"description": "Get all pending services (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "1"]
+						},
+						"description": "Get specific service details (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/1/approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "1", "approve"]
+						},
+						"description": "Approve a service (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reason\": \"Service does not meet requirements\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/1/reject",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "1", "reject"]
+						},
+						"description": "Reject a service with reason (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "statistics"]
+						},
+						"description": "Get service statistics (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Approve Services",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"service_ids\": [1, 2, 3]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/bulk-approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "bulk-approve"]
+						},
+						"description": "Bulk approve multiple services (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Reject Services",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"service_ids\": [1, 2, 3],\n    \"reason\": \"Services do not meet requirements\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/bulk-reject",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "bulk-reject"]
+						},
+						"description": "Bulk reject multiple services (Admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users"]
+						},
+						"description": "Get all users with filters (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"approved\",\n    \"notes\": \"User account approved\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", "1", "status"]
+						},
+						"description": "Update user status (Admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Orders",
+			"item": [
+				{
+					"name": "Get All Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "orders"]
+						},
+						"description": "Get all orders (Admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin Statistics",
+			"item": [
+				{
+					"name": "Get Platform Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "statistics"]
+						},
+						"description": "Get platform statistics (Admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customer",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "profile"]
+						},
+						"description": "Get customer profile with statistics"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"address_ar\": \"العنوان بالعربية\",\n    \"address_en\": \"Address in English\",\n    \"phone\": \"+1234567890\",\n    \"city_id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customer/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "profile"]
+						},
+						"description": "Update customer profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Nearby Laundries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/nearby-laundries?radius=50&max_distance=30",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "nearby-laundries"],
+							"query": [
+								{
+									"key": "radius",
+									"value": "50"
+								},
+								{
+									"key": "max_distance",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Get nearby laundries for customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Nearby Agents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/nearby-agents?radius=50&max_distance=30",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "nearby-agents"],
+							"query": [
+								{
+									"key": "radius",
+									"value": "50"
+								},
+								{
+									"key": "max_distance",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Get nearby agents for customer"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Favorite Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/favorite-services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "favorite-services"]
+						},
+						"description": "Get customer's favorite services"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recent Searches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/recent-searches",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "recent-searches"]
+						},
+						"description": "Get customer's recent searches"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Packages",
+			"item": [
+				{
+					"name": "Get All Packages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/packages",
+							"host": ["{{base_url}}"],
+							"path": ["api", "packages"]
+						},
+						"description": "Get all available packages"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Packages by Type",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/packages/type/laundry",
+							"host": ["{{base_url}}"],
+							"path": ["api", "packages", "type", "laundry"]
+						},
+						"description": "Get packages by specific type"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Package Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/packages/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "packages", "1"]
+						},
+						"description": "Get specific package details"
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase Package",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"package_id\": 1,\n    \"payment_method\": \"online\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/packages/purchase",
+							"host": ["{{base_url}}"],
+							"path": ["api", "packages", "purchase"]
+						},
+						"description": "Purchase a package for self (increases coins)"
+					},
+					"response": []
+				},
+				{
+					"name": "Gift Package",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"package_id\": 1,\n    \"recipient_email\": \"friend@example.com\",\n    \"payment_method\": \"online\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/packages/gift",
+							"host": ["{{base_url}}"],
+							"path": ["api", "packages", "gift"]
+						},
+						"description": "Gift a package to another customer"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Get My Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders"]
+						},
+						"description": "Get user's orders with filtering"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "1"]
+						},
+						"description": "Get specific order details"
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"service_id\": 1,\n    \"quantity\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/purchase-service",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "purchase-service"]
+						},
+						"description": "Purchase service using coins (decreases coins)"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reason\": \"Changed my mind\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/1/cancel",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "1", "cancel"]
+						},
+						"description": "Cancel pending order (refunds coins)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"completed\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orders/1/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "1", "status"]
+						},
+						"description": "Update order status (provider only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Provider Orders",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/provider/orders",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "provider", "orders"]
+						},
+						"description": "Get orders for provider (laundry/agent)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Purchase History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/history/purchases",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "history", "purchases"]
+						},
+						"description": "Get customer's purchase history"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orders/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "orders", "statistics"]
+						},
+						"description": "Get order statistics for user"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ratings",
+			"item": [
+				{
+					"name": "Create Rating",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"laundry_id\": 1,\n    \"rating\": 5,\n    \"comment\": \"Great service!\",\n    \"service_type\": \"washing\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ratings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings"]
+						},
+						"description": "Create a new rating for laundry"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rating",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"comment\": \"Updated comment\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/ratings/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "1"]
+						},
+						"description": "Update existing rating (within 24 hours)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rating",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "1"]
+						},
+						"description": "Delete rating"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rating Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "1"]
+						},
+						"description": "Get specific rating details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Laundry Ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/laundry/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "laundry", "1"]
+						},
+						"description": "Get all ratings for a specific laundry"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/customer/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "customer", "me"]
+						},
+						"description": "Get customer's own ratings"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rating Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/stats/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "stats", "1"]
+						},
+						"description": "Get rating statistics for a laundry"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Ratings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/ratings/search?rating=5&service_type=washing",
+							"host": ["{{base_url}}"],
+							"path": ["api", "ratings", "search"],
+							"query": [
+								{
+									"key": "rating",
+									"value": "5"
+								},
+								{
+									"key": "service_type",
+									"value": "washing"
+								}
+							]
+						},
+						"description": "Search ratings with filters"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Laundry",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "profile"]
+						},
+						"description": "Get laundry profile (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name_ar\": \"مغسلة النظافة\",\n    \"name_en\": \"Clean Laundry\",\n    \"address_ar\": \"العنوان بالعربية\",\n    \"address_en\": \"Address in English\",\n    \"phone\": \"+1234567890\",\n    \"city_id\": 1,\n    \"working_hours\": {\n        \"monday\": [\"09:00\", \"18:00\"],\n        \"tuesday\": [\"09:00\", \"18:00\"]\n    },\n    \"delivery_available\": true,\n    \"pickup_available\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/laundry/profile",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "profile"]
+						},
+						"description": "Update laundry profile (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"online\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/laundry/status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "status"]
+						},
+						"description": "Update laundry status (online/offline/maintenance)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "statistics"]
+						},
+						"description": "Get laundry statistics (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "services"]
+						},
+						"description": "Get laundry's services (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Nearby Agents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/nearby-agents",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "nearby-agents"]
+						},
+						"description": "Get nearby agents for laundry (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Agents by City",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/agents-by-city/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "agents-by-city", "1"]
+						},
+						"description": "Get agents by specific city (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Purchase Agent Supply",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"service_id\": 1,\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/laundry/purchase-agent-supply",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "purchase-agent-supply"]
+						},
+						"description": "Purchase agent supply using cash (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Workers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/workers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "workers"]
+						},
+						"description": "Get laundry workers (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Worker",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Worker Name\",\n    \"email\": \"worker@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"phone\": \"+1234567890\",\n    \"position\": \"Washer\",\n    \"salary\": 1000\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/laundry/workers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "workers"]
+						},
+						"description": "Add new worker to laundry (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Workers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/workers/pending",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "workers", "pending"]
+						},
+						"description": "Get pending workers (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Worker",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/laundry/workers/1/approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "laundry", "workers", "1", "approve"]
+						},
+						"description": "Approve worker (Laundry role only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Services",
+			"item": [
+				{
+					"name": "Get My Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services"]
+						},
+						"description": "Get laundry's services (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Service",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name_ar\": \"غسيل الملابس\",\n    \"name_en\": \"Clothes Washing\",\n    \"description_ar\": \"وصف الخدمة بالعربية\",\n    \"description_en\": \"Service description in English\",\n    \"type\": \"washing\",\n    \"price\": 25.00,\n    \"coin_cost\": 20,\n    \"image\": \"service_image.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services"]
+						},
+						"description": "Create new service (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						},
+						"description": "Get specific service details (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Service",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name_en\": \"Updated Service Name\",\n    \"price\": 30.00,\n    \"coin_cost\": 25\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						},
+						"description": "Update service (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Service",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "1"]
+						},
+						"description": "Delete service (Laundry role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/services/statistics",
+							"host": ["{{base_url}}"],
+							"path": ["api", "services", "statistics"]
+						},
+						"description": "Get service statistics (Laundry role only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service Purchase",
+			"item": [
+				{
+					"name": "Get Available Services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/services",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "services"]
+						},
+						"description": "Get available services from nearby laundries (Customer role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Services by Location",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/services-by-location?radius=50&max_distance=30",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "services-by-location"],
+							"query": [
+								{
+									"key": "radius",
+									"value": "50"
+								},
+								{
+									"key": "max_distance",
+									"value": "30"
+								}
+							]
+						},
+						"description": "Get services filtered by location (Customer role only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/customer/services/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customer", "services", "1"]
+						},
+						"description": "Get detailed service information (Customer role only)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set base URL",
+					"if (!pm.environment.get('base_url')) {",
+					"    pm.environment.set('base_url', 'http://localhost:8000');",
+					"}",
+					"",
+					"// Auto-set Authorization header if token exists",
+					"if (pm.environment.get('access_token')) {",
+					"    pm.request.headers.add({",
+					"        key: 'Authorization',",
+					"        value: 'Bearer ' + pm.environment.get('access_token'),",
+					"        disabled: false,",
+					"    });",
+					"}",
+					"",
+					"// Set Accept header for JSON responses",
+					"pm.request.headers.add({",
+					"    key: 'Accept',",
+					"    value: 'application/json',",
+					"    disabled: false,",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-save access token from login response",
+					"if (pm.response.code === 200 || pm.response.code === 201) {",
+					"    const response = pm.response.json();",
+					"    if (response.access_token) {",
+					"        pm.environment.set('access_token', response.access_token);",
+					"    } else if (response.token) {",
+					"        pm.environment.set('access_token', response.token);",
+					"    }",
+					"}",
+					"",
+					"// Log response for debugging",
+					"console.log('Response:', pm.response.text());"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
